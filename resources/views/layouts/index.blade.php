@@ -23,7 +23,7 @@
         
         <div class="row">
             <div class="col-md-6">
-                <img src="/images/university.jpg" alt="Trường Đại Học" class="img-fluid rounded shadow">
+                <img src="{{ url('/images/introduction.png') }}" alt="Trường Đại Học" class="img-fluid rounded shadow">
             </div>
             <div class="col-md-6 d-flex align-items-center">
                 <div>
@@ -99,7 +99,7 @@
                     <div class="card-body">
                         <div class="timeline">
                             <div class="d-flex mb-4">
-                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">1</div>
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; min-width: 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">1</div>
                                 <div class="ms-3">
                                     <h4>Tải và điền biểu mẫu đăng ký</h4>
                                     <p>Tải biểu mẫu đăng ký từ mục "Biểu Mẫu" bên dưới và điền đầy đủ thông tin cá nhân theo hướng dẫn.</p>
@@ -107,7 +107,7 @@
                             </div>
                             
                             <div class="d-flex mb-4">
-                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">2</div>
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; min-width: 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">2</div>
                                 <div class="ms-3">
                                     <h4>Nộp biểu mẫu và các giấy tờ cần thiết</h4>
                                     <p>Nộp biểu mẫu đã điền cùng với bản photo CMND/CCCD, thẻ sinh viên, và 2 ảnh 3x4 tại Văn phòng KTX.</p>
@@ -115,7 +115,7 @@
                             </div>
                             
                             <div class="d-flex mb-4">
-                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">3</div>
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; min-width: 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">3</div>
                                 <div class="ms-3">
                                     <h4>Thanh toán phí KTX</h4>
                                     <p>Sau khi hồ sơ được duyệt, tiến hành thanh toán phí KTX theo một trong các phương thức: chuyển khoản ngân hàng, thanh toán trực tiếp tại văn phòng KTX.</p>
@@ -123,7 +123,7 @@
                             </div>
                             
                             <div class="d-flex">
-                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">4</div>
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; min-width: 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">4</div>
                                 <div class="ms-3">
                                     <h4>Nhận phòng</h4>
                                     <p>Sau khi hoàn tất các bước trên, sinh viên sẽ được thông báo ngày nhận phòng và các hướng dẫn cần thiết.</p>

@@ -8,9 +8,22 @@
     <!-- Bootstrap CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" type="text/css" href="{{ url('css/common.css') }}">
+    <link rel="icon" href="https://wtc1.edu.vn/wp-content/uploads/2020/10/cropped-1575452751.nv_-32x32.jpg" sizes="32x32">
 </head>
 
 <body>
+    <div class="bg-white py-2">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <img src="https://wtc1.edu.vn/wp-content/uploads/2020/10/cropped-1575452751.nv_-32x32.jpg" alt="Logo" class="me-2" style="height: 40px;">
+                <div>
+                    <div class="fw-bold text-primary">Trường Cao đẳng Giao thông vận tải Đường thủy I</div>
+                    <div class="text-secondary">Waterway Transport College No1</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container">
