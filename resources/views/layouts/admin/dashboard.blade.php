@@ -36,22 +36,22 @@
                 </div>
                 <div class="nav flex-column px-3">
                     <a href="#" class="nav-link active">
-                        <i class="fas fa-users me-2"></i> Danh sách học sinh
+                        <i class="fas fa-users me-2"></i>Danh sách học sinh
                     </a>
                     <a href="#" class="nav-link">
-                        <i class="fas fa-graduation-cap me-2"></i> Lớp học
+                        <i class="fa-solid fa-house"></i> Danh sách phòng   
                     </a>
                     <a href="#" class="nav-link">
-                        <i class="fas fa-award me-2"></i> Điểm số
+                    <i class="fa-solid fa-house-user"></i> Danh sách loại phòng
                     </a>
                     <a href="#" class="nav-link">
-                        <i class="fas fa-calendar-alt me-2"></i> Lịch học
+                    <i class="fa-duotone fa-solid fa-money-bill"></i> Quản lý giá phòng
                     </a>
                     <a href="#" class="nav-link">
-                        <i class="fas fa-clipboard-list me-2"></i> Điểm danh
+                    <i class="fa-solid fa-user-lock"></i> Quản lý vi phạm nội quy
                     </a>
                     <a href="#" class="nav-link">
-                        <i class="fas fa-chart-bar me-2"></i> Báo cáo
+                    <i class="fa-solid fa-chart-simple"></i> Báo cáo thống kê
                     </a>
                     <a href="#" class="nav-link">
                         <i class="fas fa-cog me-2"></i> Cài đặt
