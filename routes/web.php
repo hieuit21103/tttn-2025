@@ -10,7 +10,7 @@ Route::get('/forms/{filename}', function ($filename) {
     return response()->download(storage_path('app/public/forms/' . $filename));
 })->name('forms.download');
 
-Route::get('/admin/dashboard',function(){
+Route::get('/admin/',function(){
     return view('layouts.admin.dashboard');
 });
 

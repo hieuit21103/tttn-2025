@@ -6,7 +6,7 @@
     <!-- Hero Section -->
     <section id="home" class="hero-section text-center">
         <div class="container">
-            <h1 class="display-4 fw-bold mb-4">Ký Túc Xá Trường Đại Học</h1>
+            <h1 class="display-4 fw-bold mb-4">KTX Trường Cao Đẳng GTVT Đường Thuỷ I</h1>
             <p class="lead mb-5">Môi trường sống lý tưởng cho sinh viên với đầy đủ tiện nghi và an ninh 24/7</p>
             <a href="#registration" class="btn btn-primary btn-lg me-3">Đăng Ký Ngay</a>
             <a href="#downloads" class="btn btn-outline-light btn-lg">Tải Biểu Mẫu</a>
@@ -27,9 +27,8 @@
             </div>
             <div class="col-md-6 d-flex align-items-center">
                 <div>
-                    <h3 class="mb-4">Trường Đại Học - Nơi Ươm Mầm Tài Năng</h3>
-                    <p>Trường Đại Học chúng tôi là một trong những cơ sở giáo dục hàng đầu tại Việt Nam, với hơn 30 năm kinh nghiệm đào tạo và phát triển nguồn nhân lực chất lượng cao.</p>
-                    <p>Với hệ thống cơ sở vật chất hiện đại, đội ngũ giảng viên giàu kinh nghiệm và môi trường học tập quốc tế, chúng tôi tự hào đã đào tạo ra nhiều thế hệ sinh viên tài năng, đóng góp tích cực cho sự phát triển của đất nước.</p>
+                    <h3 class="mb-4">Trường Cao Đẳng GTVT Đường Thuỷ I - Nơi Ươm Mầm Tài Năng</h3>
+                    <p>Trường Cao đẳng Giao thông vận tải Đường thủy I, thành lập năm 1961 tại Hải Phòng với tên Trường Hàng Giang, đã trải qua nhiều lần đổi tên và nâng cấp, chính thức mang tên hiện tại từ năm 2017. Với hơn 60 năm phát triển, trường đã đào tạo hàng ngàn kỹ sư, thuyền trưởng, máy trưởng và cán bộ chuyên môn, góp phần cung cấp nguồn nhân lực chất lượng cao cho ngành giao thông vận tải đường thủy.</p>
                     <p>Ký túc xá của trường được xây dựng với mục tiêu cung cấp môi trường sống an toàn, tiện nghi và thân thiện cho sinh viên, tạo điều kiện tốt nhất để các bạn có thể tập trung vào việc học tập và nghiên cứu.</p>
                 </div>
             </div>
@@ -147,50 +146,28 @@
         
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="card shadow">
+                <div class="card shadow border-primary">
                     <div class="card-body">
                         <h4 class="card-title text-center mb-4">Tải Các Biểu Mẫu Cần Thiết</h4>
                         
                         <div class="list-group">
-                            <a href="{{ url('/forms/dang-ky-ktx.pdf') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h5 class="mb-1">Đơn đăng ký KTX</h5>
-                                    <p class="mb-1 text-muted">Mẫu đơn đăng ký ở KTX dành cho sinh viên</p>
-                                </div>
-                                <span class="btn btn-sm btn-primary">
-                                    <i class="bi bi-download me-1"></i> Tải xuống
-                                </span>
-                            </a>
-                            
-                            <a href="{{ url('/forms/cam-ket.pdf') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h5 class="mb-1">Bản cam kết</h5>
-                                    <p class="mb-1 text-muted">Bản cam kết tuân thủ nội quy KTX</p>
-                                </div>
-                                <span class="btn btn-sm btn-primary">
-                                    <i class="bi bi-download me-1"></i> Tải xuống
-                                </span>
-                            </a>
-                            
-                            <a href="{{ url('/forms/huong-dan.pdf') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h5 class="mb-1">Hướng dẫn đăng ký</h5>
-                                    <p class="mb-1 text-muted">Tài liệu hướng dẫn chi tiết quy trình đăng ký KTX</p>
-                                </div>
-                                <span class="btn btn-sm btn-primary">
-                                    <i class="bi bi-download me-1"></i> Tải xuống
-                                </span>
-                            </a>
-                            
-                            <a href="{{ url('/forms/noi-quy.pdf') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h5 class="mb-1">Nội quy KTX</h5>
-                                    <p class="mb-1 text-muted">Nội quy và quy định của Ký túc xá</p>
-                                </div>
-                                <span class="btn btn-sm btn-primary">
-                                    <i class="bi bi-download me-1"></i> Tải xuống
-                                </span>
-                            </a>
+                            @foreach ([
+                                ['url' => '/forms/dang-ky-ktx.pdf', 'title' => 'Đơn đăng ký KTX', 'description' => 'Mẫu đơn đăng ký ở KTX dành cho sinh viên', 'icon' => 'fas fa-file-signature'],
+                                ['url' => '/forms/cam-ket.pdf', 'title' => 'Bản cam kết', 'description' => 'Bản cam kết tuân thủ nội quy KTX', 'icon' => 'fas fa-handshake'],
+                                ['url' => '/forms/huong-dan.pdf', 'title' => 'Hướng dẫn đăng ký', 'description' => 'Tài liệu hướng dẫn chi tiết quy trình đăng ký KTX', 'icon' => 'fas fa-book'],
+                                ['url' => '/forms/noi-quy.pdf', 'title' => 'Nội quy KTX', 'description' => 'Nội quy và quy định của Ký túc xá', 'icon' => 'fas fa-clipboard-list'],
+                            ] as $form)
+                                <a href="{{ url($form['url']) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center hover-effect">
+                                    <div>
+                                        <h5 class="mb-1"><i class="{{ $form['icon'] }} me-1"></i>{{ $form['title'] }}</h5>
+                                        <p class="mb-1 text-muted">{{ $form['description'] }}</p>
+                                    </div>
+                                    <span class="btn btn-sm btn-primary">
+                                        <i class="fa-solid fa-download"></i>
+                                        Tải xuống
+                                    </span>
+                                </a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -198,7 +175,6 @@
         </div>
     </div>
 </section>
-
     <!-- Contact Section -->
     <section id="contact" class="py-5">
     <div class="container">
@@ -215,11 +191,11 @@
                         <ul class="list-unstyled">
                             <li class="mb-3 d-flex align-items-center">
                                 <i class="bi bi-geo-alt-fill me-3 text-primary fs-5"></i>
-                                <span>Số 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội</span>
+                                <span>Số 22 Đinh Nhu - P. Lam Sơn - Q. Lê Chân -TP. Hải Phòng</span>
                             </li>
                             <li class="mb-3 d-flex align-items-center">
                                 <i class="bi bi-telephone-fill me-3 text-primary fs-5"></i>
-                                <span>(024) 3869 4242</span>
+                                <span>(0225)3835190</span>
                             </li>
                             <li class="mb-3 d-flex align-items-center">
                                 <i class="bi bi-envelope-fill me-3 text-primary fs-5"></i>

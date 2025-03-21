@@ -12,23 +12,18 @@
 </head>
 
 <body>
-    <div class="bg-white py-2">
+     <div class="bg-white py-2 d-none d-md-block banner">
         <div class="container">
-            <div class="d-flex align-items-center">
-                <img src="https://wtc1.edu.vn/wp-content/uploads/2020/10/cropped-1575452751.nv_-32x32.jpg" alt="Logo" class="me-2" style="height: 40px;">
-                <div>
-                    <div class="fw-bold text-primary">Trường Cao đẳng Giao thông vận tải Đường thủy I</div>
-                    <div class="text-secondary">Waterway Transport College No1</div>
-                </div>
+            <div class="d-flex">
+            <img width="700" height="125" src="http://wtc1.edu.vn/wp-content/uploads/2020/12/thanh-duong-thuy-noi-quy-khu-the-duc4.png" class="header_logo header-logo" alt="Trường Cao đẳng GTVT đường thủy I- Hàng Giang I">
             </div>
         </div>
     </div>
-
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="#">KTX Trường Cao Đẳng Giao Thông Vận Tải Đường Thủy I</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -59,7 +54,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h5>Ký Túc Xá Trường Đại Học</h5>
+                    <h5>KTX Trường Cao Đẳng GTVT Đường Thuỷ I.</h5>
                     <p>Môi trường sống lý tưởng cho sinh viên</p>
                     <div class="d-flex mt-3">
                         <a href="#" class="text-white me-3"><i class="bi bi-facebook fs-4"></i></a>
@@ -88,7 +83,7 @@
             </div>
             <hr class="mt-4">
             <div class="text-center">
-                <p class="mb-0">&copy; {{ date('Y') }} Ký Túc Xá Trường Đại Học. Tất cả các quyền được bảo lưu.</p>
+                <p class="mb-0">&copy; {{ date('Y') }} Trường Cao Đẳng GTVT Đường Thuỷ I.</p>
             </div>
         </div>
     </footer>

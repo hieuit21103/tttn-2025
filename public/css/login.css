@@ -38,7 +38,7 @@ body {
 
 .login-image {
     flex: 1;
-    background-image: url('/api/placeholder/450/500');
+    background-image: url('https://wtc1.edu.vn/wp-content/uploads/2023/03/Anh-TT-Nha-truong-1024x414.png');
     background-size: cover;
     background-position: center;
     position: relative;

@@ -1,9 +1,17 @@
 .hero-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/college.png');
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://wtc1.edu.vn/wp-content/uploads/2023/03/Anh-TT-Nha-truong-1024x414.png');
     background-size: cover;
     background-position: center;
     color: white;
     padding: 100px 0;
+}
+
+.banner {
+    background: url('https://wtc1.edu.vn/wp-content/uploads/2020/09/hinhanh-1.png');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    height: 125px;
 }
 
 .feature-card {
@@ -122,4 +130,20 @@
     .action-buttons .btn {
         margin-bottom: 0.25rem;
     }
+}
+
+.hover-effect:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
+
+.list-group-item {
+    display: flex;
+    align-items: center; /* Vertically center the items */
+    justify-content: space-between; /* Space between text and button */
+}
+
+.list-group-item .d-flex {
+    flex-grow: 1; /* Allow the text container to grow and take available space */
 }
