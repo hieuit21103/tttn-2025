@@ -9,7 +9,6 @@
         <div class="login-image">
             <div class="login-branding">
                 <h2>HỆ THỐNG QUẢN LÝ HỌC SINH NỘI TRÚ</h2>
-                <h2>HỆ THỐNG QUẢN LÝ HỌC SINH NỘI TRÚ</h2>
                 <p>Nền tảng số hóa toàn diện cho việc quản lý trường học hiện đại</p>
             </div>
         </div>
@@ -18,13 +17,12 @@
             <div class="login-logo">
                 <span><i class="fas fa-graduation-cap"></i></span>
             </div>
-            
             <div class="login-header">
                 <h1>Đăng nhập</h1>
                 <p>Vui lòng đăng nhập để tiếp tục sử dụng hệ thống</p>
             </div>
-            
-            <form id="loginForm">
+            <form id="loginForm" method="POST" action="{{ route('login') }}" novalidate>
+                @csrf
                 <div class="form-group">
                     <label for="username">Tên đăng nhập</label>
                     <i class="fas fa-user"></i>
@@ -48,7 +46,12 @@
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng nhập</button>
-            </form>    
+            </form>
+            @if ($errors->any())
+                <div>
+                    <strong class="text-danger"><i>{{ $errors->first() }}</i></strong>
+                </div>
+            @endif    
     <script>
     </script>
 </body>
