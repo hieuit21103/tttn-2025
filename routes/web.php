@@ -91,6 +91,5 @@ Route::prefix('admin/students')->group(function () {
         return response()->json(['success' => true]);
     })->name('admin.students.assign-room');
 });
-Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
