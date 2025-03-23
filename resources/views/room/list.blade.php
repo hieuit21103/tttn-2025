@@ -1,8 +1,3 @@
-@extends('layouts.admin.master')
-
-@section('title', 'Quản lý KTX')
-
-@section('content')
 <div class="container-fluid py-4">
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -114,45 +109,44 @@
             </div>
         </div>
     </div>
-</div>
-
-<!-- Add Dorm Modal -->
-<div class="modal fade" id="addDormModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Thêm KTX mới</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label">Tên KTX</label>
-                        <input type="text" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Loại phòng</label>
-                        <select class="form-select" required>
-                            <option value="4">4 người</option>
-                            <option value="6">6 người</option>
-                            <option value="8">8 người</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Số phòng</label>
-                        <input type="number" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Giá/tháng</label>
-                        <input type="number" class="form-control" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary">Lưu</button>
+    <!-- Add Dorm Modal -->
+    <div class="modal fade" id="addDormModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm KTX mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Tên KTX</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Loại phòng</label>
+                            <select class="form-select" required>
+                                <option value="4">4 người</option>
+                                <option value="6">6 người</option>
+                                <option value="8">8 người</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Số phòng</label>
+                            <input type="number" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Giá/tháng</label>
+                            <input type="number" class="form-control" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary">Lưu</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
+

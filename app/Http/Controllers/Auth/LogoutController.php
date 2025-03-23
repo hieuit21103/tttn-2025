@@ -11,6 +11,6 @@ class LogoutController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('index');
+        return redirect()->intended(route('index'));
     }
 }

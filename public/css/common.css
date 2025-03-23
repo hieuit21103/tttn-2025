@@ -131,19 +131,3 @@
         margin-bottom: 0.25rem;
     }
 }
-
-.hover-effect:hover {
-    background-color: #f8f9fa;
-    transform: scale(1.02);
-    transition: all 0.3s ease;
-}
-
-.list-group-item {
-    display: flex;
-    align-items: center; /* Vertically center the items */
-    justify-content: space-between; /* Space between text and button */
-}
-
-.list-group-item .d-flex {
-    flex-grow: 1; /* Allow the text container to grow and take available space */
-}
