@@ -23,13 +23,25 @@
     border-radius: 5px;
     margin-bottom: 5px;
 }
+
 .nav-link:hover {
     background-color: #f8f9fa;
 }
+
 .nav-link.active {
     background-color: #0d6efd;
     color: white;
 }
+
+.dropdown-item:hover { 
+    background-color: #e9ecef; 
+    color: #333; 
+}
+
 .status-badge {
     font-size: 0.75rem;
+}
+
+.dropdown-toggle:hover {
+    background-color: #73b2f1;
 }

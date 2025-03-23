@@ -13,13 +13,22 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto d-flex align-items-center">
-                    <li class="nav-item">
-                        <span class="text-white me-3">Xin chào, {{ Auth::user()->name }}</span>
-                    </li>
-                    <li class="nav-item ms-3">
-                        <a href="{{ route('logout') }}" class="btn btn-outline-light btn-sm">
-                            <i class="fas fa-sign-out-alt me-1"></i> Đăng xuất
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ Auth::user()->name }}
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user-circle me-2"></i> Tài khoản
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('logout') }}">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>
