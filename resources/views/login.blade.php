@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập - Hệ thống Quản lý Học sinh</title>
-    @vite(['resources/css/app.css','resources/js/app.js'])
-    <link rel="stylesheet" type="text/css" href="{{ url('css/login.css') }}">
-</head>
+@extends('layouts.app')
+@section('title','Đăng nhập')
+@section('css')
+    <link rel="stylesheet" href="{{ url('css/login.css') }}">
+@endsection
+@section('content')
 <body>
     <div class="login-container">
         <div class="login-image">
             <div class="login-branding">
+                <h2>HỆ THỐNG QUẢN LÝ HỌC SINH NỘI TRÚ</h2>
                 <h2>HỆ THỐNG QUẢN LÝ HỌC SINH NỘI TRÚ</h2>
                 <p>Nền tảng số hóa toàn diện cho việc quản lý trường học hiện đại</p>
             </div>
@@ -54,4 +52,4 @@
     <script>
     </script>
 </body>
-</html>
+@endsection
