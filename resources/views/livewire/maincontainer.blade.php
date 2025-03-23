@@ -10,30 +10,42 @@
                             <img src="https://thuvien.wtc1.edu.vn/public/themes/images/logo.png" alt="Logo trường" class="rounded-circle" width="64">
                         </div>
                         <div class="nav flex-column">
-                            <button class="nav-link active py-2">
-                                <i class="fas fa-home me-2"></i> Trang chủ
-                            </button>
-                            <button wire:click="setActiveComponent('student.list')" class="nav-link py-2">
-                                <i class="fas fa-user-graduate me-2"></i> Quản lý học sinh
-                            </button>
-                            <button wire:click="setActiveComponent('room.list')" class="nav-link py-2">
-                                <i class="fas fa-building me-2"></i> Quản lý phòng ở
-                            </button>
-                            <button class="nav-link py-2">
-                                <i class="fas fa-clipboard-list me-2"></i> Điểm danh
-                            </button>
-                            <button class="nav-link py-2">
-                                <i class="fas fa-money-bill-wave me-2"></i> Quản lý học phí
-                            </button>
-                            <button class="nav-link py-2">
-                                <i class="fas fa-exclamation-circle me-2"></i> Vi phạm kỷ luật
-                            </button>
-                            <button class="nav-link py-2">
-                                <i class="fas fa-chart-bar me-2"></i> Thống kê báo cáo
-                            </button>
-                            <button class="nav-link py-2">
-                                <i class="fas fa-cog me-2"></i> Cài đặt hệ thống
-                            </button>
+                            <a href="/" class="nav-link {{ $activeComponent === 'homepage' ? 'active' : '' }} py-2">
+                                <i class="fas fa-home me-1"></i>
+                                <span class="d-inline-block">Trang chủ</span>
+                            </a>
+                            <a href="#" wire:click.prevent="setActiveComponent('student.list')" class="nav-link {{ $activeComponent === 'student.list' ? 'active' : '' }} py-2">
+                                <i class="fas fa-user-graduate me-1"></i>
+                                <span class="d-inline-block">Danh Sách Học Sinh</span>
+                            </a>
+                            <a href="#" wire:click.prevent="setActiveComponent('room.list')" class="nav-link {{ $activeComponent === 'room.list' ? 'active' : '' }} py-2">
+                                <i class="fas fa-building me-1"></i>
+                                <span class="d-inline-block">Danh Sách Phòng</span>
+                            </a>
+                            <a href="#" wire:click.prevent="setActiveComponent('room.types')" class="nav-link {{ $activeComponent === 'room.types' ? 'active' : '' }} py-2">
+                                <i class="fas fa-home me-1"></i>
+                                <span class="d-inline-block">Loại Phòng</span>
+                            </a>
+                            <a href="#" wire:click.prevent="setActiveComponent('room.price')" class="nav-link {{ $activeComponent === 'room.price' ? 'active' : '' }} py-2">
+                                <i class="fas fa-money-bill-wave me-1"></i>
+                                <span class="d-inline-block">Mức Phí Phòng</span>
+                            </a>
+                            <a href="#" wire:click.prevent="setActiveComponent('violation.list')" class="nav-link {{ $activeComponent === 'violation.list' ? 'active' : '' }} py-2">
+                                <i class="fas fa-exclamation-circle me-1"></i>
+                                <span class="d-inline-block">Vi Phạm Kỷ Luật</span>
+                            </a>
+                            <a href="#" wire:click.prevent="setActiveComponent('violation.level')" class="nav-link {{ $activeComponent === 'violation.level' ? 'active' : '' }} py-2">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <span class="d-inline-block"> Mức Vi Phạm Kỷ Luật</span>
+                            </a>
+                            <a href="#" wire:click.prevent="setActiveComponent('report')" class="nav-link {{ $activeComponent === 'report' ? 'active' : '' }} py-2">
+                                <i class="fas fa-chart-bar me-1"></i>
+                                <span class="d-inline-block">Báo Cáo Thống Kê</span>
+                            </a>
+                            <a href="#" wire:click.prevent="setActiveComponent('setting')" class="nav-link {{ $activeComponent === 'setting' ? 'active' : '' }} py-2">
+                                <i class="fas fa-cog me-1"></i>
+                                <span class="d-inline-block">Cài Đặt Hệ Thống</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -42,7 +54,13 @@
             <!-- Main Content Area -->
                 <div class="col-md-9 col-lg-10">
                     <div class="card shadow-sm">
-                        @livewire($activeComponent)
+                        @if($activeComponent === 'homepage')
+                            @livewire('homepage')
+                        @elseif($activeComponent === 'student.list')
+                            @livewire('student-list')
+                        @elseif($activeComponent === 'room.list')
+                            @livewire('room-list')
+                        @endif
                     </div>
                 </div>
             </div>

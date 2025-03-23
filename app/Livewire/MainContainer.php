@@ -6,15 +6,15 @@ use Livewire\Component;
 
 class MainContainer extends Component
 {
-    public $activeComponent= 'homepage';
+    public $activeComponent = 'homepage';
 
     public function setActiveComponent($component)
     {
-        $this->activeComponent = $component; // Set the active component
+        $this->activeComponent = $component;
     }
 
     public function render()
     {
-        return view('livewire.maincontainer'); // Return the view for this component
+        return view('livewire.maincontainer');
     }
 }
