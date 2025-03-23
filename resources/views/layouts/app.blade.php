@@ -9,5 +9,8 @@
     <link rel="icon" href="https://wtc1.edu.vn/wp-content/uploads/2020/10/cropped-1575452751.nv_-32x32.jpg" sizes="32x32">
     @livewireStyles
 </head>
+<body class="bg-light">
 @yield('content')
-@yield('scripts')
+@livewireScripts
+</body>
+</html>
