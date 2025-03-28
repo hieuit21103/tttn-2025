@@ -10,9 +10,9 @@
                             <img src="https://thuvien.wtc1.edu.vn/public/themes/images/logo.png" alt="Logo trường" class="rounded-circle" width="64">
                         </div>
                         <div class="nav flex-column">
-                            <a href="/" class="nav-link {{ $activeComponent === 'homepage' ? 'active' : '' }} py-2">
+                            <a href="#" wire:click.prevent="setActiveComponent('pending-approvals')" class="nav-link {{ $activeComponent === 'pending-approvals' ? 'active' : '' }} py-2">
                                 <i class="fas fa-home me-1"></i>
-                                <span class="d-inline-block">Trang chủ</span>
+                                <span class="d-inline-block">Hồ Sơ Chờ Duyệt</span>
                             </a>
                             <a href="#" wire:click.prevent="setActiveComponent('student.list')" class="nav-link {{ $activeComponent === 'student.list' ? 'active' : '' }} py-2">
                                 <i class="fas fa-user-graduate me-1"></i>
@@ -53,9 +53,9 @@
 
             <!-- Main Content Area -->
                 <div class="col-md-9 col-lg-10">
-                    <div class="card shadow-sm">
-                        @if($activeComponent === 'homepage')
-                            @livewire('homepage')
+                    <div class="card shadow-sm mb-4">
+                        @if($activeComponent === 'pending-approvals')
+                            @livewire('pending-approvals')
                         @elseif($activeComponent === 'student.list')
                             @livewire('student-list')
                         @elseif($activeComponent === 'room.list')

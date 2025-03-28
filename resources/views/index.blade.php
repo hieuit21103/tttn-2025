@@ -181,117 +181,223 @@
                 <h2 class="fw-bold">Đăng Ký Ký Túc Xá</h2>
                 <hr class="w-25 mx-auto">
             </div>
+            
             <div class="row justify-content-center">
-                <div class="col-md-8">
+                <div class="col-lg-8">
                     <div class="card shadow">
                         <div class="card-body">
-                            <!-- <form id="dormitoryForm" action="" method="POST" enctype="multipart/form-data"> -->
-                            <form id="dormitoryForm" method="POST" enctype="multipart/form-data">                          
+                            @if(session('success'))
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+                            
+                            @if(session('error'))
+                                <div class="alert alert-danger">
+                                    {{ session('error') }}
+                                </div>
+                            @endif
+                            
+                            <form id="registrationForm" action="{{ route('dormitory.register') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
+                                
                                 <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Mã Học Sinh</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                                            <input type="text" class="form-control @error('student_code') is-invalid @enderror" name="student_code" value="{{ old('student_code') }}" required>
+                                            @error('student_code')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    
                                     <div class="col-md-6">
                                         <label class="form-label">Họ và Tên</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                            <input type="text" class="form-control" name="fullname" required placeholder="Nhập họ và tên">
+                                            <input type="text" class="form-control @error('fullname') is-invalid @enderror" name="fullname" value="{{ old('fullname') }}" required>
+                                            @error('fullname')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
+                                </div>
+                                
+                                <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Ngày Sinh</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                            <input type="date" class="form-control" name="birthdate" required>
+                                            <input type="date" class="form-control @error('birthdate') is-invalid @enderror" name="birthdate" value="{{ old('birthdate') }}" required>
+                                            @error('birthdate')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="row mb-3">
+                                    
                                     <div class="col-md-6">
                                         <label class="form-label">Lớp</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
-                                            <input type="text" class="form-control" name="class" required placeholder="Nhập lớp">
+                                            <input type="text" class="form-control @error('class') is-invalid @enderror" name="class" value="{{ old('class') }}" required>
+                                            @error('class')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
+                                </div>
+                                
+                                <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Số CMND/CCCD</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                            <input type="text" class="form-control" name="id_number" required placeholder="Nhập số CMND">
+                                            <input type="text" class="form-control @error('id_number') is-invalid @enderror" name="id_number" value="{{ old('id_number') }}" required>
+                                            @error('id_number')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Ảnh CCCD mặt trước</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                            <input type="file" class="form-control" name="id_front" accept="image/*" required>
-                                        </div>
-                                        <small class="text-muted">Tải lên ảnh CCCD/CMND mặt trước</small>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Ảnh CCCD mặt sau</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                            <input type="file" class="form-control" name="id_back" accept="image/*" required>
-                                        </div>
-                                        <small class="text-muted">Tải lên ảnh CCCD/CMND mặt sau</small>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
+                                    
                                     <div class="col-md-6">
                                         <label class="form-label">Số Điện Thoại Cá Nhân</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
-                                            <input type="tel" class="form-control" name="personal_phone" required placeholder="Nhập số điện thoại">
+                                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                            <input type="text" class="form-control @error('personal_phone') is-invalid @enderror" name="personal_phone" value="{{ old('personal_phone') }}" required>
+                                            @error('personal_phone')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
+                                </div>
+                                
+                                <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Số Điện Thoại Gia Đình</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                            <input type="tel" class="form-control" name="family_phone" required placeholder="Nhập số điện thoại gia đình">
+                                            <span class="input-group-text"><i class="fas fa-home"></i></span>
+                                            <input type="text" class="form-control @error('family_phone') is-invalid @enderror" name="family_phone" value="{{ old('family_phone') }}" required>
+                                            @error('family_phone')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                            <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required>
+                                            <div class="form-text">Chúng tôi sẽ gửi thông tin về học phí và xác nhận đăng ký đến email này.</div>
+                                            @error('email')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
-
+                                
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label class="form-label">Ảnh CCCD mặt trước</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                            <input type="file" class="form-control @error('id_front') is-invalid @enderror" name="id_front" required>
+                                            @error('id_front')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label class="form-label">Ảnh CCCD mặt sau</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                            <input type="file" class="form-control @error('id_back') is-invalid @enderror" name="id_back" required>
+                                            @error('id_back')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div class="row mb-3">
                                     <div class="col-12">
                                         <label class="form-label">Địa Chỉ Thường Trú</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                                            <input type="text" class="form-control" name="permanent_address" required placeholder="Nhập địa chỉ thường trú">
+                                        <div class="row g-2">
+                                            <div class="col-md-4">
+                                                <select class="form-select @error('city') is-invalid @enderror" name="city" id="city" required>
+                                                    <option value="">Chọn Tỉnh/Thành phố</option>
+                                                </select>
+                                                @error('city')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <select class="form-select @error('district') is-invalid @enderror" name="district" id="district" required>
+                                                    <option value="">Chọn Quận/Huyện</option>
+                                                </select>
+                                                @error('district')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <select class="form-select @error('ward') is-invalid @enderror" name="ward" id="ward" required>
+                                                    <option value="">Chọn Phường/Xã</option>
+                                                </select>
+                                                @error('ward')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="truthCommitment" required>
-                                        <label class="form-check-label" for="truthCommitment">
-                                            Tôi cam đoan các thông tin trên là đúng sự thật
-                                        </label>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label class="form-label">Địa chỉ chi tiết</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                            <input type="text" class="form-control @error('address_detail') is-invalid @enderror" name="address_detail" value="{{ old('address_detail') }}" required>
+                                            @error('address_detail')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
-
+                                
                                 <div class="mb-3">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="dormitoryRules" required>
-                                        <label class="form-check-label" for="dormitoryRules">
-                                            Tôi đã đọc và đồng ý 
-                                            <a href="#" data-bs-toggle="modal" data-bs-target="#commitmentModal">
-                                                <i class="fas fa-external-link-alt"></i> Quy định ký túc xá
-                                            </a>
+                                        <input class="form-check-input @error('truth_commitment') is-invalid @enderror" type="checkbox" name="truth_commitment" id="truth_commitment" required>
+                                        <label class="form-check-label" for="truth_commitment">
+                                            Tôi cam kết thông tin trên là chính xác
                                         </label>
+                                        @error('truth_commitment')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
-
-                                <button type="submit" id="registerBtn" class="btn btn-primary btn-lg w-100" disabled>
-                                    <i class="fas fa-check-circle me-2"></i>Đăng Ký Ký Túc Xá
-                                </button>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input @error('dormitory_rules') is-invalid @enderror" type="checkbox" name="dormitory_rules" id="dormitory_rules" required>
+                                        <label class="form-check-label" for="dormitory_rules">
+                                            Tôi đã đọc và đồng ý với quy định ký túc xá
+                                        </label>
+                                        @error('dormitory_rules')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary btn-lg" id="registerBtn">Đăng Ký</button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -316,7 +422,7 @@
                         <li>Giữ gìn vệ sinh phòng ở, khu vực chung và bảo quản tài sản của ký túc xá.</li>
                         <li>Không được tự ý thay đổi, sửa chữa phòng ở khi chưa được sự đồng ý của ban quản lý.</li>
                         <li>Chấp hành các quy định về an ninh, an toàn và phòng chống cháy nổ.</li>
-                        <li>Đóng học phí và các khoản phí khác đúng thời hạn.</li>
+                        <li>Đóng học phí và các khoản phí khác đúng thói hạn.</li>
                         <li>Không được cho người ngoài ở qua đêm, không được mang các vật dụng nguy hiểm, dễ cháy nổ vào khu ký túc xá.</li>
                     </ol>
                 </div>
@@ -426,5 +532,102 @@
             </div>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const truthCommitment = document.getElementById('truth_commitment');
+            const dormitoryRules = document.getElementById('dormitory_rules');
+            const registerBtn = document.getElementById('registerBtn');
+            const citis = document.getElementById("city");
+            const districts = document.getElementById("district");
+            const wards = document.getElementById("ward");
+            
+            // Handle form submission button
+            function checkButtonStatus() {
+                const addressValid = citis.value && districts.value && wards.value;
+                registerBtn.disabled = !(truthCommitment.checked && dormitoryRules.checked && addressValid);
+            }
+
+            truthCommitment.addEventListener('change', checkButtonStatus);
+            dormitoryRules.addEventListener('change', checkButtonStatus);
+
+            // Address selection
+            var Parameter = {
+                url: "{{ route('address.data') }}", 
+                method: "GET"
+            };
+            
+            axios(Parameter)
+                .then(function (response) {
+                    if (response.data && Array.isArray(response.data)) {
+                        renderCity(response.data);
+                    } else {
+                        throw new Error('Invalid data format');
+                    }
+                })
+                .catch(function (error) {
+                    console.error("Error loading address data:", error);
+                    alert("Không thể tải dữ liệu địa chỉ. Vui lòng thử lại sau.");
+                });
+
+            function renderCity(data) {
+                // Reset và disable các dropdown phụ thuộc
+                district.length = 1;
+                ward.length = 1;
+                district.disabled = true;
+                ward.disabled = true;
+
+                if (!Array.isArray(data)) {
+                    console.error("Data is not an array");
+                    return;
+                }
+
+                for (const x of data) {
+                    citis.options[citis.options.length] = new Option(x.Name, x.Id);
+                }
+
+                citis.onchange = function () {
+                    district.length = 1;
+                    ward.length = 1;
+                    ward.disabled = true;
+                    
+                    if(this.value != "") {
+                        const result = data.find(n => n.Id === this.value);
+                        if (result && result.Districts) {
+                            district.disabled = false;
+                            for (const k of result.Districts) {
+                                district.options[district.options.length] = new Option(k.Name, k.Id);
+                            }
+                        }
+                    } else {
+                        district.disabled = true;
+                    }
+                    checkButtonStatus();
+                };
+
+                district.onchange = function () {
+                    ward.length = 1;
+                    
+                    if (this.value != "") {
+                        const dataCity = data.find((n) => n.Id === citis.value);
+                        if (dataCity && dataCity.Districts) {
+                            const dataWards = dataCity.Districts.find(n => n.Id === this.value);
+                            if (dataWards && dataWards.Wards) {
+                                ward.disabled = false;
+                                for (const w of dataWards.Wards) {
+                                    wards.options[wards.options.length] = new Option(w.Name, w.Id);
+                                }
+                            }
+                        }
+                    } else {
+                        ward.disabled = true;
+                    }
+                    checkButtonStatus();
+                };
+                wards.onchange = checkButtonStatus;
+            }
+        });
+    </script>
 </body>
 @endsection
