@@ -13,30 +13,25 @@
             <form class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Tên KTX</label>
-                    <input type="text" class="form-control" name="search" placeholder="Tìm theo tên...">
+                    <input type="text" class="form-control" wire:model="search" placeholder="Tìm theo tên...">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label class="form-label">Loại phòng</label>
-                    <select class="form-select" name="room_type">
+                    <select class="form-select" wire:model="roomType">
                         <option value="">Tất cả</option>
                         <option value="4">4 người</option>
                         <option value="6">6 người</option>
                         <option value="8">8 người</option>
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label class="form-label">Trạng thái</label>
-                    <select class="form-select" name="status">
+                    <select class="form-select" wire:model="status">
                         <option value="">Tất cả</option>
                         <option value="available">Còn chỗ</option>
                         <option value="full">Đã đầy</option>
                         <option value="maintenance">Bảo trì</option>
                     </select>
-                </div>
-                <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search"></i> Tìm kiếm
-                    </button>
                 </div>
             </form>
         </div>
@@ -60,29 +55,34 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach(range(1, 10) as $index)
+                        @foreach($rooms as $room)
                         <tr>
-                            <td>{{ $index }}</td>
-                            <td>KTX {{ chr(64 + $index) }}</td>
-                            <td>4 người</td>
-                            <td>40</td>
-                            <td>35</td>
-                            <td>{{ number_format(500000 + ($index * 50000)) }}đ</td>
+                            <td>{{ $room->id }}</td>
+                            <td>{{ $room->name }}</td>
+                            <td>{{ $room->type }} người</td>
+                            <td>{{ $room->capacity }}</td>
+                            <td>{{ $room->current_occupancy }}</td>
+                            <td>{{ number_format($room->monthly_price) }}đ</td>
                             <td>
-                                <span class="badge bg-{{ $index % 3 == 0 ? 'success' : ($index % 3 == 1 ? 'warning' : 'danger') }}">
-                                    {{ $index % 3 == 0 ? 'Còn chỗ' : ($index % 3 == 1 ? 'Sắp đầy' : 'Đã đầy') }}
+                                <span class="badge bg-{{ $room->status === 'available' ? 'success' : ($room->status === 'full' ? 'danger' : 'warning') }}">
+                                    {{ $room->status === 'available' ? 'Còn chỗ' : ($room->status === 'full' ? 'Đã đầy' : 'Bảo trì') }}
                                 </span>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-info" title="Xem chi tiết">
+                                <button class="btn btn-sm btn-info" title="Xem chi tiết" wire:click="showDetails({{ $room->id }})">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                                <button class="btn btn-sm btn-warning" title="Chỉnh sửa" wire:click="showEditModal({{ $room->id }})">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger" title="Xóa">
+                                <button class="btn btn-sm btn-danger" title="Xóa" wire:click="confirmDelete({{ $room->id }})">
                                     <i class="fas fa-trash"></i>
                                 </button>
+                                @if($room->isAvailable())
+                                    <button class="btn btn-sm btn-success" title="Xếp phòng" wire:click="showAssignModal({{ $room->id }})">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
@@ -92,23 +92,40 @@
 
             <!-- Pagination -->
             <div class="d-flex justify-content-between align-items-center mt-4">
-                <div>Hiển thị 1-10 của 100 mục</div>
+                <div>Hiển thị {{ ($currentPage - 1) * 10 + 1 }}-{{ min($currentPage * 10, $totalRooms) }} của {{ $totalRooms }} mục</div>
                 <nav>
                     <ul class="pagination mb-0">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#">Trước</a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Sau</a>
-                        </li>
+                        @if($currentPage === 1)
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Trước</a>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="#" wire:click="loadRooms({{ $currentPage - 1 }})">Trước</a>
+                            </li>
+                        @endif
+
+                        @for($i = 1; $i <= $lastPage; $i++)
+                            <li class="page-item {{ $currentPage === $i ? 'active' : '' }}">
+                                <a class="page-link" href="#" wire:click="loadRooms({{ $i }})">{{ $i }}</a>
+                            </li>
+                        @endfor
+
+                        @if($currentPage === $lastPage)
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Sau</a>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="#" wire:click="loadRooms({{ $currentPage + 1 }})">Sau</a>
+                            </li>
+                        @endif
                     </ul>
                 </nav>
             </div>
         </div>
     </div>
+
     <!-- Add Dorm Modal -->
     <div class="modal fade" id="addDormModal" tabindex="-1">
         <div class="modal-dialog">
@@ -118,35 +135,67 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form wire:submit.prevent="createRoom">
                         <div class="mb-3">
                             <label class="form-label">Tên KTX</label>
-                            <input type="text" class="form-control" required>
+                            <input type="text" class="form-control" wire:model="name" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Loại phòng</label>
-                            <select class="form-select" required>
+                            <select class="form-select" wire:model="type" required>
                                 <option value="4">4 người</option>
                                 <option value="6">6 người</option>
                                 <option value="8">8 người</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Số phòng</label>
-                            <input type="number" class="form-control" required>
+                            <label class="form-label">Sức chứa</label>
+                            <input type="number" class="form-control" wire:model="capacity" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Giá/tháng</label>
-                            <input type="number" class="form-control" required>
+                            <input type="number" class="form-control" wire:model="monthly_price" required>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-primary">Lưu</button>
+                    <button type="submit" class="btn btn-primary" wire:click="createRoom">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Room Modal -->
+    <div class="modal fade" id="assignRoomModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xếp phòng cho sinh viên</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="assignRoom">
+                        <div class="mb-3">
+                            <label class="form-label">Phòng</label>
+                            <input type="text" class="form-control" readonly value="{{ $selectedRoom ? $selectedRoom->name : '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sinh viên</label>
+                            <select class="form-select" wire:model="selectedStudentId">
+                                <option value="">Chọn sinh viên</option>
+                                @foreach($availableStudents as $student)
+                                    <option value="{{ $student->id }}">{{ $student->fullname }} ({{ $student->student_code }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary" wire:click="assignRoom">Xác nhận</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
