@@ -584,7 +584,7 @@
                 }
 
                 for (const x of data) {
-                    citis.options[citis.options.length] = new Option(x.Name, x.Id);
+                    citis.options[citis.options.length] = new Option(x.name, x.code);
                 }
 
                 citis.onchange = function () {
@@ -593,11 +593,11 @@
                     ward.disabled = true;
                     
                     if(this.value != "") {
-                        const result = data.find(n => n.Id === this.value);
-                        if (result && result.Districts) {
+                        const result = data.find(n => n.code === this.value);
+                        if (result && result.districts) {
                             district.disabled = false;
-                            for (const k of result.Districts) {
-                                district.options[district.options.length] = new Option(k.Name, k.Id);
+                            for (const k of result.districts) {
+                                district.options[district.options.length] = new Option(k.name, k.code);
                             }
                         }
                     } else {
@@ -608,22 +608,18 @@
 
                 district.onchange = function () {
                     ward.length = 1;
-                    
-                    if (this.value != "") {
-                        const dataCity = data.find((n) => n.Id === citis.value);
-                        if (dataCity && dataCity.Districts) {
-                            const dataWards = dataCity.Districts.find(n => n.Id === this.value);
-                            if (dataWards && dataWards.Wards) {
+                    if(this.value != "") {
+                        const result = data.find(n => n.code === citis.value);
+                        if (result && result.districts) {
+                            const districtData = result.districts.find(d => d.code === this.value);
+                            if (districtData && districtData.wards) {
                                 ward.disabled = false;
-                                for (const w of dataWards.Wards) {
-                                    wards.options[wards.options.length] = new Option(w.Name, w.Id);
+                                for (const p of districtData.wards) {
+                                    ward.options[ward.options.length] = new Option(p.name, p.code);
                                 }
                             }
                         }
-                    } else {
-                        ward.disabled = true;
                     }
-                    checkButtonStatus();
                 };
                 wards.onchange = checkButtonStatus;
             }
