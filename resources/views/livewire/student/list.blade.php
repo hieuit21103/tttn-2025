@@ -2,6 +2,9 @@
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Danh sách sinh viên</h2>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#studentModal">
+            <i class="fas fa-plus me-2"></i> Thêm học sinh mới
+        </button>
     </div>
 
     <!-- Filters -->
@@ -106,6 +109,61 @@
                         @endif
                     </ul>
                 </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div class="modal fade" id="studentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm học sinh mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="createStudent">
+                        <div class="mb-3">
+                            <label class="form-label">Mã học sinh</label>
+                            <input type="text" class="form-control" wire:model="student.student_code" required>
+                            @error('student.student_code') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Họ và tên</label>
+                            <input type="text" class="form-control" wire:model="student.fullname" required>
+                            @error('student.fullname') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Lớp</label>
+                            <input type="text" class="form-control" wire:model="student.class" required>
+                            @error('student.class') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ngày sinh</label>
+                            <input type="date" class="form-control" wire:model="student.birthdate" required>
+                            @error('student.birthdate') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Địa chỉ</label>
+                            <textarea class="form-control" wire:model="student.address" required></textarea>
+                            @error('student.address') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Số điện thoại</label>
+                            <input type="tel" class="form-control" wire:model="student.phone" required>
+                            @error('student.phone') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" wire:model="student.email" required>
+                            @error('student.email') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary" wire:click="createStudent">Lưu</button>
+                </div>
             </div>
         </div>
     </div>

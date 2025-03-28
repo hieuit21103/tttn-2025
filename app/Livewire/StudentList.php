@@ -16,6 +16,18 @@ class StudentList extends Component
     public $totalStudents = 0;
     public $lastPage = 1;
 
+    public $studentModal = false;
+    public $student = [
+        'student_code' => '',
+        'fullname' => '',
+        'class' => '',
+        'birthdate' => '',
+        'address' => '',
+        'phone' => '',
+        'email' => '',
+        'activated_at' => null
+    ];
+
     public function mount()
     {
         $this->loadStudents();
@@ -51,6 +63,47 @@ class StudentList extends Component
         $this->totalStudents = $paginated->total();
         $this->lastPage = $paginated->lastPage();
         $this->currentPage = $page;
+    }
+
+    public function showStudentModal()
+    {
+        $this->studentModal = true;
+        $this->resetStudentForm();
+    }
+
+    public function resetStudentForm()
+    {
+        $this->student = [
+            'student_code' => '',
+            'fullname' => '',
+            'class' => '',
+            'birthdate' => '',
+            'address' => '',
+            'phone' => '',
+            'email' => '',
+            'activated_at' => null
+        ];
+    }
+
+    public function createStudent()
+    {
+        $validated = $this->validate([
+            'student.student_code' => 'required|unique:students,student_code',
+            'student.fullname' => 'required',
+            'student.class' => 'required',
+            'student.birthdate' => 'required|date',
+            'student.address' => 'required',
+            'student.phone' => 'required|numeric',
+            'student.email' => 'required|email|unique:students,email',
+        ]);
+
+        $validated['student']['activated_at'] = now();
+        Student::create($validated['student']);
+
+        $this->studentModal = false;
+        $this->resetStudentForm();
+        $this->loadStudents($this->currentPage);
+        $this->dispatch('success', 'Đã thêm học sinh thành công!');
     }
 
     public function updatingSearch()
