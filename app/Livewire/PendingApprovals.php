@@ -4,9 +4,13 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\DormitoryRegistration;
+use App\Models\Student;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\AccountActivationNotification;
+use App\Mail\RegistrationApprovalNotification;
 use Illuminate\Support\Str;
+use App\Mail\RegistrationRejectionNotification;
+use App\Mail\DuplicateRegistrationNotification;
 
 class PendingApprovals extends Component
 {
@@ -51,34 +55,97 @@ class PendingApprovals extends Component
     {
         $registration = DormitoryRegistration::findOrFail($id);
         
-        // Generate activation token
-        $registration->activation_token = Str::random(64);
-        $registration->status = 'approved';
-        $registration->save();
+        try {
+            // Check if student already exists in students table
+            $existingStudent = Student::where('student_code', $registration->student_code)
+                ->orWhere('email', $registration->email)
+                ->first();
 
-        // Generate activation URL
-        $activationUrl = route('activate', $registration->activation_token);
+            if ($existingStudent) {
+                $registration->status = 'rejected';
+                $registration->save();
 
-        // Send activation email
-        Mail::to($registration->email)->send(new AccountActivationNotification($registration, $activationUrl));
+                // Send duplicate notification
+                Mail::to($registration->email)->send(new DuplicateRegistrationNotification($registration, $existingStudent));
 
-        // Reload data
-        $this->loadRegistrations($this->currentPage);
+                session()->flash('error', 'Học sinh đã đăng ký trước đó. Email thông báo đã được gửi đến người dùng.');
+                $this->loadRegistrations($this->currentPage);
+                return;
+            }
 
-        session()->flash('success', 'Đã duyệt hồ sơ thành công. Email kích hoạt đã được gửi đến người dùng.');
+            // Check if there's another pending registration
+            $existingPending = DormitoryRegistration::where('id', '!=', $id)
+                ->where(function($q) use ($registration) {
+                    $q->where('student_code', $registration->student_code)
+                      ->orWhere('email', $registration->email);
+                })
+                ->where('status', 'pending')
+                ->first();
+
+            if ($existingPending) {
+                session()->flash('error', 'Đã có một hồ sơ đăng ký khác đang chờ duyệt với thông tin tương tự.');
+                $this->loadRegistrations($this->currentPage);
+                return;
+            }
+
+            // Generate activation token
+            $registration->activation_token = Str::random(64);
+            $registration->status = 'approved';
+            $registration->save();
+
+            // Add to students table
+            Student::create([
+                'student_code' => $registration->student_code,
+                'fullname' => $registration->fullname,
+                'class' => $registration->class,
+                'birthdate' => $registration->birthdate,
+                'id_number' => $registration->id_number,
+                'personal_phone' => $registration->personal_phone,
+                'family_phone' => $registration->family_phone,
+                'address' => $registration->address,
+                'email' => $registration->email,
+                'id_front_path' => $registration->id_front_path,
+                'id_back_path' => $registration->id_back_path,
+                'registered_at' => $registration->created_at,
+                'activated_at' => now()
+            ]);
+
+            // Generate activation URL
+            $activationUrl = route('activate', $registration->activation_token);
+
+            // Send activation email
+            Mail::to($registration->email)->send(new AccountActivationNotification($registration, $activationUrl));
+
+            // Send approval notification
+            Mail::to($registration->email)->send(new RegistrationApprovalNotification($registration));
+
+            // Reload data
+            $this->loadRegistrations($this->currentPage);
+
+            session()->flash('success', 'Đã duyệt hồ sơ thành công. Email kích hoạt và thông báo đã được gửi đến người dùng.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Có lỗi xảy ra khi duyệt hồ sơ. Vui lòng thử lại.');
+        }
     }
 
     public function reject($id)
     {
         $registration = DormitoryRegistration::findOrFail($id);
         
-        $registration->status = 'rejected';
-        $registration->save();
+        try {
+            $registration->status = 'rejected';
+            $registration->save();
 
-        // Reload data
-        $this->loadRegistrations($this->currentPage);
+            // Send rejection notification
+            Mail::to($registration->email)->send(new RegistrationRejectionNotification($registration));
 
-        session()->flash('success', 'Đã từ chối hồ sơ thành công.');
+            // Reload data
+            $this->loadRegistrations($this->currentPage);
+
+            session()->flash('success', 'Đã từ chối hồ sơ thành công. Email thông báo đã được gửi đến người dùng.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Có lỗi xảy ra khi từ chối hồ sơ. Vui lòng thử lại.');
+        }
     }
 
     public function updatingSearch()

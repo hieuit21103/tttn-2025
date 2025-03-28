@@ -187,17 +187,17 @@
                     <div class="card shadow">
                         <div class="card-body">
                             @if(session('success'))
-                                <div class="alert alert-success">
+                                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
                                     {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
-                            
                             @if(session('error'))
-                                <div class="alert alert-danger">
+                                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
                                     {{ session('error') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
-                            
                             <form id="registrationForm" action="{{ route('dormitory.register') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 
