@@ -140,7 +140,11 @@ class PendingApprovals extends Component
             Mail::to($registration->email)->send(new RegistrationRejectionNotification($registration));
 
             // Reload data
-            $this->loadRegistrations($this->currentPage);
+            if ($this->currentPage > 1 && DormitoryRegistration::where('status', 'pending')->where('id', '>', $id)->count() == 0) {
+                $this->loadRegistrations($this->currentPage - 1);
+            } else {
+                $this->loadRegistrations($this->currentPage);
+            }
 
             session()->flash('success', 'Đã từ chối hồ sơ thành công. Email thông báo đã được gửi đến người dùng.');
         } catch (\Exception $e) {

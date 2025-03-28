@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class MainContainer extends Component
 {
-    public $activeComponent = 'homepage';
+    public $activeComponent = 'pending-approvals';
 
     public function setActiveComponent($component)
     {
