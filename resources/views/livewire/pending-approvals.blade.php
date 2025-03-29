@@ -98,11 +98,11 @@
                                         </div>
                                         <div class="row mt-3">
                                             <div class="col-md-6">
-                                                <h6>Ảnh CMND Mặt Trước</h6>
+                                                <h6>Ảnh CCCD Mặt Trước</h6>
                                                 <img src="{{ asset('storage/' . $registration->id_front_path) }}" class="img-fluid" alt="CMND Mặt Trước">
                                             </div>
                                             <div class="col-md-6">
-                                                <h6>Ảnh CMND Mặt Sau</h6>
+                                                <h6>Ảnh CCCD Mặt Sau</h6>
                                                 <img src="{{ asset('storage/' . $registration->id_back_path) }}" class="img-fluid" alt="CMND Mặt Sau">
                                             </div>
                                         </div>
@@ -117,7 +117,7 @@
 
             <!-- Pagination -->
             <div class="d-flex justify-content-between align-items-center mt-4">
-                <div>Hiển thị từ {{ $pagination['from'] }} đến {{ $pagination['to'] }} trong tổng số {{ $pagination['total'] }} hồ sơ</div>
+                <div>Hiển thị {{ $pagination['from'] == "" ? 1 : $pagination['from'] }}-{{ $pagination['to'] == "" ? 0 : $pagination['to'] }} trong tổng số {{ $pagination['total'] }} hồ sơ</div>
                 <nav>
                     <ul class="pagination mb-0">
                         @if($pagination['current_page'] > 1)

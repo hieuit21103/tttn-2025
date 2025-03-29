@@ -543,7 +543,6 @@
             const districts = document.getElementById("district");
             const wards = document.getElementById("ward");
             
-            // Handle form submission button
             function checkButtonStatus() {
                 const addressValid = citis.value && districts.value && wards.value;
                 registerBtn.disabled = !(truthCommitment.checked && dormitoryRules.checked && addressValid);
@@ -551,8 +550,6 @@
 
             truthCommitment.addEventListener('change', checkButtonStatus);
             dormitoryRules.addEventListener('change', checkButtonStatus);
-
-            // Address selection
             var Parameter = {
                 url: "{{ route('address.data') }}", 
                 method: "GET"
@@ -572,7 +569,6 @@
                 });
 
             function renderCity(data) {
-                // Reset và disable các dropdown phụ thuộc
                 district.length = 1;
                 ward.length = 1;
                 district.disabled = true;
@@ -583,46 +579,60 @@
                     return;
                 }
 
+                // Load thành phố
+                citis.length = 1;
+                citis.options[0] = new Option("Chọn thành phố", "");
                 for (const x of data) {
-                    citis.options[citis.options.length] = new Option(x.name, x.code);
+                    citis.options[citis.options.length] = new Option(x.Name, x.Code);
                 }
 
+                // Xử lý khi chọn thành phố
                 citis.onchange = function () {
                     district.length = 1;
                     ward.length = 1;
                     ward.disabled = true;
                     
-                    if(this.value != "") {
-                        const result = data.find(n => n.code === this.value);
+                    if(this.value !== "") {
+                        const result = data.find(n => n.Name === this.value);
                         if (result && result.districts) {
                             district.disabled = false;
+                            district.length = 1;
+                            district.options[0] = new Option("Chọn quận/huyện", "");
                             for (const k of result.districts) {
-                                district.options[district.options.length] = new Option(k.name, k.code);
+                                district.options[district.options.length] = new Option(k.Name, k.Code);
                             }
                         }
-                    } else {
-                        district.disabled = true;
                     }
                     checkButtonStatus();
                 };
 
+                // Xử lý khi chọn quận
                 district.onchange = function () {
                     ward.length = 1;
-                    if(this.value != "") {
-                        const result = data.find(n => n.code === citis.value);
+                    ward.disabled = true;
+                    
+                    if(this.value !== "" && citis.value !== "") {
+                        const result = data.find(n => n.Name === citis.value);
                         if (result && result.districts) {
-                            const districtData = result.districts.find(d => d.code === this.value);
+                            const districtData = result.districts.find(d => d.Name === this.value);
                             if (districtData && districtData.wards) {
                                 ward.disabled = false;
+                                ward.length = 1;
+                                ward.options[0] = new Option("Chọn phường/xã", "");
                                 for (const p of districtData.wards) {
-                                    ward.options[ward.options.length] = new Option(p.name, p.code);
+                                    ward.options[ward.options.length] = new Option(p.Name, p.Code);
                                 }
                             }
                         }
                     }
+                    checkButtonStatus();
                 };
-                wards.onchange = checkButtonStatus;
+
+                // Gọi onchange của thành phố để load dữ liệu ban đầu
+                citis.onchange();
             }
+
+            wards.onchange = checkButtonStatus;
         });
     </script>
 </body>

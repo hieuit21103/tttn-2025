@@ -48,17 +48,20 @@ class DormitoryController extends Controller
         }
 
         try {
-            // Store ID card images
             $id_front_path = $request->file('id_front')->store('public/id_cards');
             $id_back_path = $request->file('id_back')->store('public/id_cards');
 
-            // Format full address
-            $full_address = $request->address_detail . ', ' . 
-                           $request->input('ward') . ', ' . 
-                           $request->input('district') . ', ' . 
-                           $request->input('city');
+            $divisions = json_decode(file_get_contents(resource_path('data/vietnam-divisions.json')), true);
 
-            // Save to database
+            $city = collect($divisions['cities'])->firstWhere('id', $request->input('city'))['name'] ?? '';
+            $district = collect($divisions['districts'])->firstWhere('id', $request->input('district'))['name'] ?? '';
+            $ward = collect($divisions['wards'])->firstWhere('id', $request->input('ward'))['name'] ?? '';
+
+            $full_address = $request->address_detail . ', ' . 
+                           $ward . ', ' . 
+                           $district . ', ' . 
+                           $city;
+
             $registration = new DormitoryRegistration([
                 'student_code' => $request->student_code,
                 'fullname' => $request->fullname,

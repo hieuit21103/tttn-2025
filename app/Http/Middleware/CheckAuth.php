@@ -16,9 +16,14 @@ class CheckAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::Check()) {
+        if (!Auth::check()) {
             return redirect()->route('login');
         }
+
+        if (Auth::user()->role->name !== 'admin') {
+            return redirect()->route('index');
+        }
+
         return $next($request);
     }
 }

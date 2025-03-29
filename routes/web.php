@@ -37,7 +37,7 @@ Route::post('/contact', function (Request $request) {
     return redirect()->back()->with('success', 'Thắc mắc của bạn đã được gửi!');
 })->name('contact.submit');
 
-Route::post('/dormitory/register', 'App\Http\Controllers\DormitoryController@register')->name('dormitory.register');
+Route::post('/dormitory/register', [DormitoryController::class, 'register'])->name('dormitory.register');
 
 Route::get('/activate/{token}', [AccountActivationController::class, 'activate'])->name('activate');
 
