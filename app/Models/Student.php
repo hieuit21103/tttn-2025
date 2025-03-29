@@ -13,6 +13,7 @@ class Student extends Model
     protected $fillable = [
         'student_code',
         'fullname',
+        'gender',
         'class',
         'birthdate',
         'id_number',
@@ -30,11 +31,27 @@ class Student extends Model
     protected $casts = [
         'birthdate' => 'date',
         'registered_at' => 'datetime',
-        'activated_at' => 'datetime'
+        'activated_at' => 'datetime',
+        'room_id' => 'integer'
     ];
 
     public function room()
     {
         return $this->belongsTo(Room::class);
+    }
+
+    public function isActivated()
+    {
+        return !is_null($this->activated_at);
+    }
+
+    public function getGenderLabel()
+    {
+        return $this->gender === 'Nam' ? 'Nam' : 'Nữ';
+    }
+
+    public function hasRoom()
+    {
+        return !is_null($this->room_id);
     }
 }

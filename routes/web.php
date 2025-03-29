@@ -5,7 +5,8 @@ use Illuminate\Http\Request;
 use App\Http\Middleware\CheckAuth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\Auth\AccountActivationController;
+use App\Http\Controllers\AccountActivationController;
+use App\Http\Controllers\DormitoryController;
 
 Route::get('/', function () {
     return view('index');

@@ -20,11 +20,19 @@
                     <input type="text" class="form-control" wire:model="class" placeholder="Nhập tên lớp">
                 </div>
                 <div class="col-md-3">
+                    <label class="form-label">Giới tính</label>
+                    <select class="form-select" wire:model="gender">
+                        <option value="">Tất cả</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <label class="form-label">Trạng thái phòng</label>
                     <select class="form-select" wire:model="hasRoom">
                         <option value="">Tất cả</option>
-                        <option value="yes">Đã có phòng</option>
-                        <option value="no">Chưa có phòng</option>
+                        <option value="1">Đã có phòng</option>
+                        <option value="0">Chưa có phòng</option>
                     </select>
                 </div>
             </form>
@@ -40,11 +48,13 @@
                         <tr>
                             <th>Mã học sinh</th>
                             <th>Họ và tên</th>
+                            <th>Giới tính</th>
                             <th>Lớp</th>
                             <th>Phòng</th>
                             <th>Ngày sinh</th>
                             <th>Địa chỉ</th>
                             <th>Trạng thái</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -52,24 +62,30 @@
                         <tr>
                             <td>{{ $student->student_code }}</td>
                             <td>{{ $student->fullname }}</td>
+                            <td>{{ $student->getGenderLabel() }}</td>
                             <td>{{ $student->class }}</td>
                             <td>
-                                @if($student->room)
-                                    <span class="badge bg-success">
-                                        {{ $student->room->name }}
-                                    </span>
-                                @else
-                                    <span class="badge bg-warning">
-                                        Chưa có phòng
-                                    </span>
-                                @endif
+                                <span class="badge bg-{{ $student->hasRoom() ? 'success' : 'warning' }}">
+                                    {{ $student->hasRoom() ? 'Đã có phòng' : 'Chưa có phòng' }}
+                                </span>
                             </td>
                             <td>{{ $student->birthdate->format('d/m/Y') }}</td>
                             <td>{{ $student->address }}</td>
                             <td>
-                                <span class="badge bg-{{ $student->room ? 'success' : 'warning' }}">
-                                    {{ $student->room ? 'Đã có phòng' : 'Chưa có phòng' }}
+                                <span class="badge bg-{{ $student->isActivated() ? 'success' : 'warning' }}">
+                                    {{ $student->isActivated() ? 'Đã kích hoạt' : 'Chưa kích hoạt' }}
                                 </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-info" title="Xem chi tiết" wire:click="showDetails({{ $student->id }})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" title="Chỉnh sửa" wire:click="showEditModal({{ $student->id }})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" title="Xóa" wire:click="confirmDelete({{ $student->id }})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                         @endforeach
@@ -137,6 +153,15 @@
                             <label class="form-label">Lớp</label>
                             <input type="text" class="form-control" wire:model="student.class" required>
                             @error('student.class') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Giới tính</label>
+                            <select class="form-select" wire:model="student.gender">
+                                <option value="">Chọn giới tính</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </select>
+                            @error('student.gender') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Ngày sinh</label>

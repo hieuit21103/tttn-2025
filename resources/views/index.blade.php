@@ -227,6 +227,20 @@
                                 
                                 <div class="row mb-3">
                                     <div class="col-md-6">
+                                        <label class="form-label">Giới tính</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-venus-mars"></i></span>
+                                            <select class="form-select @error('gender') is-invalid @enderror" name="gender" required>
+                                                <option value="">Chọn giới tính</option>
+                                                <option value="Nam">Nam</option>
+                                                <option value="Nữ">Nữ</option>
+                                            </select>
+                                        </div>
+                                        @error('gender')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
                                         <label class="form-label">Ngày Sinh</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-calendar"></i></span>
@@ -236,7 +250,9 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    
+                                </div>
+                                
+                                <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Lớp</label>
                                         <div class="input-group">
@@ -247,9 +263,6 @@
                                             @enderror
                                         </div>
                                     </div>
-                                </div>
-                                
-                                <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Số CMND/CCCD</label>
                                         <div class="input-group">
@@ -260,7 +273,9 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    
+                                </div>
+                                
+                                <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Số Điện Thoại Cá Nhân</label>
                                         <div class="input-group">
@@ -271,9 +286,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                </div>
-                                
-                                <div class="row mb-3">
+                                    
                                     <div class="col-md-6">
                                         <label class="form-label">Số Điện Thoại Gia Đình</label>
                                         <div class="input-group">
@@ -284,7 +297,9 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    
+                                </div>
+                                
+                                <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Email</label>
                                         <div class="input-group">
@@ -296,10 +311,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                </div>
-                                
-                                <div class="row mb-3">
-                                    <div class="col-12">
+                                    <div class="col-md-6">
                                         <label class="form-label">Ảnh CCCD mặt trước</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
@@ -338,7 +350,7 @@
                                             </div>
                                             
                                             <div class="col-md-4">
-                                                <select class="form-select @error('district') is-invalid @enderror" name="district" id="district" required>
+                                                <select class="form-select @error('district') is-invalid @enderror" name="district" id="district" required disabled>
                                                     <option value="">Chọn Quận/Huyện</option>
                                                 </select>
                                                 @error('district')
@@ -347,7 +359,7 @@
                                             </div>
                                             
                                             <div class="col-md-4">
-                                                <select class="form-select @error('ward') is-invalid @enderror" name="ward" id="ward" required>
+                                                <select class="form-select @error('ward') is-invalid @enderror" name="ward" id="ward" required disabled>
                                                     <option value="">Chọn Phường/Xã</option>
                                                 </select>
                                                 @error('ward')
@@ -579,48 +591,46 @@
                     return;
                 }
 
-                // Load thành phố
                 citis.length = 1;
                 citis.options[0] = new Option("Chọn thành phố", "");
                 for (const x of data) {
-                    citis.options[citis.options.length] = new Option(x.Name, x.Code);
+                    citis.options[citis.options.length] = new Option(x.Name, x.Name);
                 }
 
-                // Xử lý khi chọn thành phố
                 citis.onchange = function () {
                     district.length = 1;
                     ward.length = 1;
+                    district.disabled = true;
                     ward.disabled = true;
                     
                     if(this.value !== "") {
                         const result = data.find(n => n.Name === this.value);
-                        if (result && result.districts) {
+                        if (result && result.Districts) {
                             district.disabled = false;
                             district.length = 1;
                             district.options[0] = new Option("Chọn quận/huyện", "");
-                            for (const k of result.districts) {
-                                district.options[district.options.length] = new Option(k.Name, k.Code);
+                            for (const k of result.Districts) {
+                                district.options[district.options.length] = new Option(k.Name, k.Name);
                             }
                         }
                     }
                     checkButtonStatus();
                 };
 
-                // Xử lý khi chọn quận
                 district.onchange = function () {
                     ward.length = 1;
                     ward.disabled = true;
                     
                     if(this.value !== "" && citis.value !== "") {
                         const result = data.find(n => n.Name === citis.value);
-                        if (result && result.districts) {
-                            const districtData = result.districts.find(d => d.Name === this.value);
-                            if (districtData && districtData.wards) {
+                        if (result && result.Districts) {
+                            const districtData = result.Districts.find(d => d.Name === this.value);
+                            if (districtData && districtData.Wards) {
                                 ward.disabled = false;
                                 ward.length = 1;
                                 ward.options[0] = new Option("Chọn phường/xã", "");
-                                for (const p of districtData.wards) {
-                                    ward.options[ward.options.length] = new Option(p.Name, p.Code);
+                                for (const p of districtData.Wards) {
+                                    ward.options[ward.options.length] = new Option(p.Name, p.Name);
                                 }
                             }
                         }
@@ -628,7 +638,6 @@
                     checkButtonStatus();
                 };
 
-                // Gọi onchange của thành phố để load dữ liệu ban đầu
                 citis.onchange();
             }
 

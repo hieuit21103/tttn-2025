@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Student;
+use App\Models\RoomType;
 
 class Room extends Model
 {
@@ -12,22 +13,26 @@ class Room extends Model
 
     protected $fillable = [
         'name',
-        'type',
+        'room_type_id',
         'capacity',
         'current_occupancy',
-        'monthly_price',
         'status'
     ];
 
     protected $casts = [
         'capacity' => 'integer',
         'current_occupancy' => 'integer',
-        'monthly_price' => 'decimal:2'
+        'status' => 'string'
     ];
 
     public function students()
     {
         return $this->hasMany(Student::class);
+    }
+
+    public function roomType()
+    {
+        return $this->belongsTo(RoomType::class);
     }
 
     public function isAvailable()

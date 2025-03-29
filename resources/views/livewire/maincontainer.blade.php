@@ -60,6 +60,8 @@
                             @livewire('student-list')
                         @elseif($activeComponent === 'room.list')
                             @livewire('room-list')
+                        @elseif($activeComponent === 'room.types')
+                            @livewire('room-type-component')
                         @endif
                     </div>
                 </div>

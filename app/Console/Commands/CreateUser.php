@@ -18,7 +18,7 @@ class CreateUser extends Command
             'username' => $this->argument('username'),
             'password' => Hash::make($this->argument('password')),
             'email' => $this->argument('email') ?? null,
-            'role_id' => $this->argument('role_id') ?? "1",
+            'role_id' => $this->argument('role_id') ?? "2",
         ]);
 
         $this->info('User created successfully.');

@@ -17,12 +17,7 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Loại phòng</label>
-                    <select class="form-select" wire:model="roomType">
-                        <option value="">Tất cả</option>
-                        <option value="4">4 người</option>
-                        <option value="6">6 người</option>
-                        <option value="8">8 người</option>
-                    </select>
+                    <livewire:room-type-component wire:model="selectedType" wire:emit="roomTypeChanged">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Trạng thái</label>
@@ -49,48 +44,43 @@
                             <th>Loại phòng</th>
                             <th>Sức chứa</th>
                             <th>Đã ở</th>
-                            <th>Giá/tháng</th>
                             <th>Trạng thái</th>
-                            <th>Thao tác</th>
+                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($rooms as $room)
-                        <tr>
-                            <td>{{ $room->id }}</td>
-                            <td>{{ $room->name }}</td>
-                            <td>{{ $room->type }} người</td>
-                            <td>{{ $room->capacity }}</td>
-                            <td>{{ $room->current_occupancy }}</td>
-                            <td>{{ number_format($room->monthly_price) }}đ</td>
-                            <td>
-                                <span class="badge bg-{{ $room->status === 'available' ? 'success' : ($room->status === 'full' ? 'danger' : 'warning') }}">
-                                    {{ $room->status === 'available' ? 'Còn chỗ' : ($room->status === 'full' ? 'Đã đầy' : 'Bảo trì') }}
-                                </span>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-info" title="Xem chi tiết" wire:click="showDetails({{ $room->id }})">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-warning" title="Chỉnh sửa" wire:click="showEditModal({{ $room->id }})">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" title="Xóa" wire:click="confirmDelete({{ $room->id }})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                                @if($room->isAvailable())
-                                    <button class="btn btn-sm btn-success" title="Xếp phòng" wire:click="showAssignModal({{ $room->id }})">
+                        @forelse($rooms as $room)
+                            <tr>
+                                <td>{{ $room->id }}</td>
+                                <td>{{ $room->name }}</td>
+                                <td>{{ $room->roomType->name ?? 'N/A' }}</td>
+                                <td>{{ $room->capacity }}</td>
+                                <td>{{ $room->current_occupancy }}</td>
+                                <td>
+                                    <span class="badge bg-{{ $room->status === 'available' ? 'success' : ($room->status === 'full' ? 'danger' : 'warning') }}">
+                                        {{ $room->status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" wire:click="showAssignModal({{ $room->id }})" title="Phân phòng">
                                         <i class="fas fa-user-plus"></i>
                                     </button>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
+                                    <button class="btn btn-sm btn-info" wire:click="showEditModal({{ $room->id }})" title="Chỉnh sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" wire:click="deleteRoom({{ $room->id }})" title="Xóa" onclick="return confirm('Bạn có chắc muốn xóa KTX này không?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center">Không có KTX nào</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination -->
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <div>Hiển thị {{ ($currentPage - 1) * 10 + 1 }}-{{ min($currentPage * 10, $totalRooms) }} của {{ $totalRooms }} mục</div>
                 <nav>

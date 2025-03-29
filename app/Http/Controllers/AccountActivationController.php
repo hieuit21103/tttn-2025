@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DormitoryRegistration;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Role;
 
 class AccountActivationController extends Controller
 {
@@ -21,6 +24,7 @@ class AccountActivationController extends Controller
             'username' => $registration->student_code,
             'email' => $registration->email,
             'password' => Hash::make($registration->personal_phone),
+            'name' => $registration->fullname,
             'role_id' => Role::where('name', 'user')->first()->id,
             'student_id' => $registration->student_id
         ]);

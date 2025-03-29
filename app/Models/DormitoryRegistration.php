@@ -11,6 +11,7 @@ class DormitoryRegistration extends Model
     protected $fillable = [
         'student_code',
         'fullname',
+        'gender',
         'birthdate',
         'class',
         'id_number',

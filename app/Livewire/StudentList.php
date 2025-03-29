@@ -5,45 +5,42 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Student;
 use App\Models\Room;
+use Illuminate\Support\Facades\Log;
+use Livewire\WithFileUploads;
 
 class StudentList extends Component
 {
     public $students = [];
     public $search = '';
     public $class = '';
+    public $gender = '';
     public $hasRoom = '';
-    public $currentPage = 1;
     public $totalStudents = 0;
     public $lastPage = 1;
-
-    public $studentModal = false;
-    public $student = [
-        'student_code' => '',
-        'fullname' => '',
-        'class' => '',
-        'birthdate' => '',
-        'address' => '',
-        'phone' => '',
-        'email' => '',
-        'activated_at' => null
-    ];
+    public $currentPage = 1;
+    public $perPage = 10;
 
     public function mount()
     {
         $this->loadStudents();
     }
 
-    public function loadStudents($page = 1)
+    public function loadStudents($page = null)
     {
+        if ($page) {
+            $this->currentPage = $page;
+        }
+
         $query = Student::query()
             ->with('room')
-            ->where('activated_at', '!=', null);
+            ->withCount('room')
+            ->orderBy('fullname');
 
         if ($this->search) {
             $query->where(function($q) {
-                $q->where('student_code', 'like', "%{$this->search}%")
-                  ->orWhere('fullname', 'like', "%{$this->search}%")
-                  ->orWhere('class', 'like', "%{$this->search}%");
+                $q->where('name', 'like', "%{$this->search}%")
+                    ->orWhere('class', 'like', "%{$this->search}%")
+                    ->orWhere('phone', 'like', "%{$this->search}%");
             });
         }
 
@@ -51,59 +48,52 @@ class StudentList extends Component
             $query->where('class', $this->class);
         }
 
-        if ($this->hasRoom === 'yes') {
+        if ($this->gender) {
+            $query->where('gender', $this->gender);
+        }
+
+        if ($this->hasRoom === '1') {
             $query->whereNotNull('room_id');
-        } elseif ($this->hasRoom === 'no') {
+        } elseif ($this->hasRoom === '0') {
             $query->whereNull('room_id');
         }
 
-        $paginated = $query->paginate(10, ['*'], 'page', $page);
+        // Calculate total students and pages
+        $this->totalStudents = $query->count();
+        $this->lastPage = ceil($this->totalStudents / $this->perPage);
         
-        $this->students = $paginated->items();
-        $this->totalStudents = $paginated->total();
-        $this->lastPage = $paginated->lastPage();
-        $this->currentPage = $page;
+        // Ensure current page is valid
+        if ($this->currentPage < 1) {
+            $this->currentPage = 1;
+        } else if ($this->currentPage > $this->lastPage) {
+            $this->currentPage = $this->lastPage ?: 1;
+        }
+
+        // Manual pagination
+        $this->students = $query->skip(($this->currentPage - 1) * $this->perPage)
+                               ->take($this->perPage)
+                               ->get();
     }
 
-    public function showStudentModal()
+    public function nextPage()
     {
-        $this->studentModal = true;
-        $this->resetStudentForm();
+        if ($this->currentPage < $this->lastPage) {
+            $this->currentPage++;
+            $this->loadStudents();
+        }
     }
 
-    public function resetStudentForm()
+    public function previousPage()
     {
-        $this->student = [
-            'student_code' => '',
-            'fullname' => '',
-            'class' => '',
-            'birthdate' => '',
-            'address' => '',
-            'phone' => '',
-            'email' => '',
-            'activated_at' => null
-        ];
+        if ($this->currentPage > 1) {
+            $this->currentPage--;
+            $this->loadStudents();
+        }
     }
 
-    public function createStudent()
+    public function goToPage($page)
     {
-        $validated = $this->validate([
-            'student.student_code' => 'required|unique:students,student_code',
-            'student.fullname' => 'required',
-            'student.class' => 'required',
-            'student.birthdate' => 'required|date',
-            'student.address' => 'required',
-            'student.phone' => 'required|numeric',
-            'student.email' => 'required|email|unique:students,email',
-        ]);
-
-        $validated['student']['activated_at'] = now();
-        Student::create($validated['student']);
-
-        $this->studentModal = false;
-        $this->resetStudentForm();
-        $this->loadStudents($this->currentPage);
-        $this->dispatch('success', 'Đã thêm học sinh thành công!');
+        $this->loadStudents($page);
     }
 
     public function updatingSearch()
@@ -112,6 +102,11 @@ class StudentList extends Component
     }
 
     public function updatingClass()
+    {
+        $this->loadStudents(1);
+    }
+
+    public function updatingGender()
     {
         $this->loadStudents(1);
     }

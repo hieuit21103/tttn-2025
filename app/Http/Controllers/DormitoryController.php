@@ -16,6 +16,7 @@ class DormitoryController extends Controller
         $validator = Validator::make($request->all(), [
             'student_code' => 'required|string|max:20|unique:dormitory_registrations',
             'fullname' => 'required|string|max:255',
+            'gender' => 'required|in:Nam,Nữ',
             'birthdate' => 'required|date|before:today',
             'class' => 'required|string|max:50',
             'id_number' => 'required|string|max:20|unique:dormitory_registrations',
@@ -39,6 +40,7 @@ class DormitoryController extends Controller
             'birthdate.before' => 'Ngày sinh không hợp lệ.',
             'truth_commitment.accepted' => 'Bạn phải đồng ý với cam kết.',
             'dormitory_rules.accepted' => 'Bạn phải đồng ý với quy định ký túc xá.',
+            'gender.in' => 'Giới tính phải là Nam hoặc Nữ.'
         ]);
 
         if ($validator->fails()) {
@@ -51,20 +53,15 @@ class DormitoryController extends Controller
             $id_front_path = $request->file('id_front')->store('public/id_cards');
             $id_back_path = $request->file('id_back')->store('public/id_cards');
 
-            $divisions = json_decode(file_get_contents(resource_path('data/vietnam-divisions.json')), true);
-
-            $city = collect($divisions['cities'])->firstWhere('id', $request->input('city'))['name'] ?? '';
-            $district = collect($divisions['districts'])->firstWhere('id', $request->input('district'))['name'] ?? '';
-            $ward = collect($divisions['wards'])->firstWhere('id', $request->input('ward'))['name'] ?? '';
-
             $full_address = $request->address_detail . ', ' . 
-                           $ward . ', ' . 
-                           $district . ', ' . 
-                           $city;
+                           $request->ward . ', ' . 
+                           $request->district . ', ' . 
+                           $request->city;
 
             $registration = new DormitoryRegistration([
                 'student_code' => $request->student_code,
                 'fullname' => $request->fullname,
+                'gender' => $request->gender,
                 'birthdate' => $request->birthdate,
                 'class' => $request->class,
                 'id_number' => $request->id_number,
