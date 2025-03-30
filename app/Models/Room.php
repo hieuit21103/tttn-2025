@@ -15,6 +15,7 @@ class Room extends Model
         'name',
         'room_type_id',
         'capacity',
+        'monthly_price',
         'current_occupancy',
         'status'
     ];
@@ -22,17 +23,18 @@ class Room extends Model
     protected $casts = [
         'capacity' => 'integer',
         'current_occupancy' => 'integer',
+        'monthly_price' => 'integer',
         'status' => 'string'
     ];
 
     public function students()
     {
-        return $this->hasMany(Student::class);
+        return $this->hasMany(Student::class,'room_id','id');
     }
 
     public function roomType()
     {
-        return $this->belongsTo(RoomType::class);
+        return $this->belongsTo(RoomType::class,'room_type_id','id');
     }
 
     public function isAvailable()

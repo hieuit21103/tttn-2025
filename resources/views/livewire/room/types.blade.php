@@ -1,10 +1,29 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Quản lý loại phòng KTX</h2>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomTypeModal">
+        <button type="button" 
+                class="btn btn-primary" 
+                wire:click="openAddModal"
+                aria-label="Thêm loại phòng mới">
             <i class="fas fa-plus"></i> Thêm loại phòng mới
         </button>
     </div>
+
+    <!-- Success Message -->
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    <!-- Error Message -->
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
     <div class="row">
         <div class="col-12">
@@ -25,7 +44,7 @@
                                     <th>ID</th>
                                     <th>Tên loại phòng</th>
                                     <th>Giá thuê/tháng</th>
-                                    <th>Số phòng</th>
+                                    <th>Sức chứa</th>
                                     <th>Ngày tạo</th>
                                     <th>Ngày cập nhật</th>
                                     <th>Thao tác</th>
@@ -37,15 +56,15 @@
                                     <td>{{ $type->id }}</td>
                                     <td>{{ $type->name }}</td>
                                     <td>{{ number_format($type->monthly_price, 0, ',', '.') }} ₫</td>
-                                    <td>{{ $type->rooms_count ?? 0 }}</td>
+                                    <td>{{ $type->capacity }}</td>
                                     <td>{{ $type->created_at->format('d/m/Y H:i') }}</td>
                                     <td>{{ $type->updated_at->format('d/m/Y H:i') }}</td>
                                     <td>
                                         <div class="btn-group">
-                                            <button class="btn btn-sm btn-primary" wire:click="editRoomType({{ $type->id }})" title="Chỉnh sửa" onclick="console.log('Type ID:', {{ $type->id }})">
+                                            <button class="btn btn-sm btn-primary" wire:click="openEditModal({{ $type->id }})" title="Chỉnh sửa">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-danger" wire:click="deleteRoomType({{ $type->id }})" title="Xóa" onclick="return confirm('Bạn có chắc muốn xóa loại phòng này không?')">
+                                            <button class="btn btn-sm btn-danger" wire:click="openDeleteModal({{ $type->id }})" title="Xóa">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -60,32 +79,32 @@
                         </table>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mt-4">
-                        <div>Hiển thị {{ ($currentPage - 1) * 10 + 1 }}-{{ min($currentPage * 10, $totalRoomTypes) }} của {{ $totalRoomTypes }} mục</div>
+                        <div>Hiển thị {{ ($currentPage - 1) * $perPage + 1 }}-{{ min($currentPage * $perPage, $totalRoomTypes) }} của {{ $totalRoomTypes }} mục</div>
                         <nav>
                             <ul class="pagination mb-0">
                                 @if($currentPage === 1)
                                     <li class="page-item disabled">
-                                        <a class="page-link" href="#">Trước</a>
+                                        <a class="page-link" href="javascript:void(0)">Trước</a>
                                     </li>
                                 @else
                                     <li class="page-item">
-                                        <a class="page-link" href="#" wire:click="loadRoomTypes({{ $currentPage - 1 }})">Trước</a>
+                                        <a class="page-link" href="javascript:void(0)" wire:click="previousPage">Trước</a>
                                     </li>
                                 @endif
 
                                 @for($i = 1; $i <= $lastPage; $i++)
                                     <li class="page-item {{ $currentPage === $i ? 'active' : '' }}">
-                                        <a class="page-link" href="#" wire:click="loadRoomTypes({{ $i }})">{{ $i }}</a>
+                                        <a class="page-link" href="javascript:void(0)" wire:click="goToPage({{ $i }})">{{ $i }}</a>
                                     </li>
                                 @endfor
 
                                 @if($currentPage === $lastPage)
                                     <li class="page-item disabled">
-                                        <a class="page-link" href="#">Sau</a>
+                                        <a class="page-link" href="javascript:void(0)">Sau</a>
                                     </li>
                                 @else
                                     <li class="page-item">
-                                        <a class="page-link" href="#" wire:click="loadRoomTypes({{ $currentPage + 1 }})">Sau</a>
+                                        <a class="page-link" href="javascript:void(0)" wire:click="nextPage">Sau</a>
                                     </li>
                                 @endif
                             </ul>
@@ -96,70 +115,104 @@
         </div>
     </div>
 
-    <!-- Modal thêm/sửa loại phòng -->
-    <div class="modal fade" id="addRoomTypeModal" tabindex="-1" wire:ignore.self>
+    <!-- Add Room Type Modal -->
+    @if($showAddModal)
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form wire:submit="{{ $isEditing ? 'updateRoomType' : 'createRoomType' }}">
-                    <div class="modal-header">
-                        <h5 class="modal-title">{{ $isEditing ? 'Cập nhật loại phòng' : 'Thêm loại phòng mới' }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm loại phòng mới</h5>
+                    <button type="button" class="btn-close" wire:click="closeModal"></button>
+                </div>
+                <form wire:submit.prevent="createRoomType">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label">Tên loại phòng</label>
-                            <input type="text" class="form-control @error('roomType.name') is-invalid @enderror" 
-                                wire:model="roomType.name">
-                            @error('roomType.name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <input type="text" class="form-control" wire:model="name" required>
+                            @error('name') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Giá thuê/tháng</label>
                             <div class="input-group">
-                                <input type="number" class="form-control @error('roomType.monthly_price') is-invalid @enderror" 
-                                    wire:model="roomType.monthly_price">
+                                <input type="number" class="form-control" wire:model="monthly_price" required>
                                 <span class="input-group-text">₫</span>
-                                @error('roomType.monthly_price')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
+                            @error('monthly_price') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sức chứa</label>
+                            <input type="number" class="form-control" wire:model="capacity" required>
+                            @error('capacity') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" wire:click="resetForm">Hủy</button>
-                        <button type="submit" class="btn btn-primary">{{ $isEditing ? 'Cập nhật' : 'Thêm' }}</button>
+                        <button type="button" class="btn btn-secondary" wire:click="closeModal">Đóng</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    @endif
+
+    <!-- Edit Room Type Modal -->
+    @if($showEditModal)
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chỉnh sửa loại phòng</h5>
+                    <button type="button" class="btn-close" wire:click="closeModal"></button>
+                </div>
+                <form wire:submit.prevent="updateRoomType">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Tên loại phòng</label>
+                            <input type="text" class="form-control" wire:model="name" required>
+                            @error('name') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Giá thuê/tháng</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" wire:model="monthly_price" required>
+                                <span class="input-group-text">₫</span>
+                            </div>
+                            @error('monthly_price') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sức chứa</label>
+                            <input type="number" class="form-control" wire:model="capacity" required>
+                            @error('capacity') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" wire:click="closeModal">Đóng</button>
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Delete Confirmation Modal -->
+    @if($showDeleteModal)
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa</h5>
+                    <button type="button" class="btn-close" wire:click="closeModal"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc muốn xóa loại phòng này không?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" wire:click="closeModal">Hủy</button>
+                    <button type="button" class="btn btn-danger" wire:click="deleteRoomType">Xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
-
-@script
-<script>
-    document.addEventListener('livewire:initialized', function () {
-        document.addEventListener('showModal', (event) => {
-            console.log(event.detail.modalId);
-            const modalId = event.detail.modalId;
-            const modal = new bootstrap.Modal(document.getElementById(modalId));
-            modal.show();
-        });
-
-        document.addEventListener('hideModal', (event) => {
-            const modalId = event.detail.modalId;
-            const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
-            if (modal) {
-                modal.hide();
-            }
-        });
-
-        const addModal = document.getElementById('addRoomTypeModal');
-        if (addModal) {
-            addModal.addEventListener('hidden.bs.modal', () => {
-                Livewire.dispatch('resetForm');
-            });
-        }
-    });
-</script>
-@endscript

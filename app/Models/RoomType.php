@@ -11,15 +11,22 @@ class RoomType extends Model
 
     protected $fillable = [
         'name',
+        'capacity',
         'monthly_price'
     ];
 
     protected $casts = [
+        'capacity' => 'integer',
         'monthly_price' => 'decimal:2'
     ];
 
     public function rooms()
     {
-        return $this->hasMany(Room::class);
+        return $this->hasMany(Room::class,'room_type_id','id');
+    }
+
+    public function getRoomsCountAttribute()
+    {
+        return $this->rooms()->count();
     }
 }

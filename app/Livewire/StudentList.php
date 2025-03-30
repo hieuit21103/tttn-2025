@@ -6,7 +6,6 @@ use Livewire\Component;
 use App\Models\Student;
 use App\Models\Room;
 use Illuminate\Support\Facades\Log;
-use Livewire\WithFileUploads;
 
 class StudentList extends Component
 {

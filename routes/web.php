@@ -40,8 +40,6 @@ Route::post('/contact', function (Request $request) {
 
 Route::post('/dormitory/register', [DormitoryController::class, 'register'])->name('dormitory.register');
 
-Route::get('/activate/{token}', [AccountActivationController::class, 'activate'])->name('activate');
-
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home',function(){
         return view('dashboard');
