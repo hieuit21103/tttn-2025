@@ -58,56 +58,17 @@
                                 </span>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-info" title="Xem chi tiết" data-bs-toggle="modal" data-bs-target="#viewModal{{ $registration->id }}">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-success" title="Duyệt" wire:click="approve({{ $registration->id }})" wire:loading.attr="disabled" wire:target="approve({{ $registration->id }})">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" title="Từ chối" wire:click="reject({{ $registration->id }})" wire:loading.attr="disabled" wire:target="reject({{ $registration->id }})">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                    <button class="btn btn-sm btn-primary" title="Xem chi tiết" wire:click="showDetails({{ $registration->id }})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-success" title="Duyệt" wire:click="approve({{ $registration->id }})" wire:loading.attr="disabled" wire:target="approve({{ $registration->id }})">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" title="Từ chối" wire:click="reject({{ $registration->id }})" wire:loading.attr="disabled" wire:target="reject({{ $registration->id }})">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                             </td>
                         </tr>
-
-                        <!-- View Modal -->
-                        <div class="modal fade" id="viewModal{{ $registration->id }}">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Chi tiết hồ sơ</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <p><strong>Mã Học Sinh:</strong> {{ $registration->student_code }}</p>
-                                                <p><strong>Họ và Tên:</strong> {{ $registration->fullname }}</p>
-                                                <p><strong>Lớp:</strong> {{ $registration->class }}</p>
-                                                <p><strong>Ngày Sinh:</strong> {{ $registration->birthdate->format('d/m/Y') }}</p>
-                                                <p><strong>Số CMND/CCCD:</strong> {{ $registration->id_number }}</p>
-                                                <p><strong>Email:</strong> {{ $registration->email }}</p>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <p><strong>Số Điện Thoại Cá Nhân:</strong> {{ $registration->personal_phone }}</p>
-                                                <p><strong>Số Điện Thoại Gia Đình:</strong> {{ $registration->family_phone }}</p>
-                                                <p><strong>Địa Chỉ:</strong> {{ $registration->address }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row mt-3">
-                                            <div class="col-md-6">
-                                                <h6>Ảnh CCCD Mặt Trước</h6>
-                                                <img src="{{ route('storage', ['path' => $registration->id_front_path]) }}" class="img-fluid" alt="CMND Mặt Trước">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <h6>Ảnh CCCD Mặt Sau</h6>
-                                                <img src="{{ route('storage', ['path' => $registration->id_back_path]) }}" class="img-fluid" alt="CMND Mặt Sau">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         @endforeach
                     </tbody>
                 </table>
@@ -148,4 +109,87 @@
             </div>
         </div>
     </div>
+
+    <!-- Details Modal -->
+    @if($showDetailsModal)
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chi tiết hồ sơ đăng ký</h5>
+                    <button type="button" class="btn-close" wire:click="closeDetailsModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Mã Học Sinh</label>
+                                <input type="text" class="form-control" value="{{ $selectedRegistration->student_code }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Họ và Tên</label>
+                                <input type="text" class="form-control" value="{{ $selectedRegistration->fullname }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Lớp</label>
+                                <input type="text" class="form-control" value="{{ $selectedRegistration->class }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Ngày Sinh</label>
+                                <input type="text" class="form-control" value="{{ $selectedRegistration->birthdate->format('d/m/Y') }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Số CMND/CCCD</label>
+                                <input type="text" class="form-control" value="{{ $selectedRegistration->id_number }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại cá nhân</label>
+                                <input type="text" class="form-control" value="{{ $selectedRegistration->personal_phone }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại gia đình</label>
+                                <input type="text" class="form-control" value="{{ $selectedRegistration->family_phone }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Địa chỉ</label>
+                                <textarea class="form-control" rows="3" readonly>{{ $selectedRegistration->address }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" value="{{ $selectedRegistration->email }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Ngày Đăng Ký</label>
+                                <input type="text" class="form-control" value="{{ $selectedRegistration->created_at->format('d/m/Y H:i') }}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Hình ảnh CMND/CCCD mặt trước</label>
+                                @if($selectedRegistration->id_front_path)
+                                    <img src="{{ Storage::url($selectedRegistration->id_front_path) }}" class="img-fluid" alt="CMND mặt trước">
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Hình ảnh CMND/CCCD mặt sau</label>
+                                @if($selectedRegistration->id_back_path)
+                                    <img src="{{ Storage::url($selectedRegistration->id_back_path) }}" class="img-fluid" alt="CMND mặt sau">
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" wire:click="closeDetailsModal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>

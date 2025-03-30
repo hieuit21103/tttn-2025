@@ -39,8 +39,10 @@ class StudentList extends Component
     public $showAddModal = false;
     public $showEditModal = false;
     public $showDeleteModal = false;
+    public $showDetailsModal = false;
     public $editingStudentId = null;
     public $deletingStudentId = null;
+    public $selectedStudent = null;
 
     public function mount()
     {
@@ -157,6 +159,18 @@ class StudentList extends Component
     {
         $this->deletingStudentId = $id;
         $this->showDeleteModal = true;
+    }
+
+    public function showDetails($id)
+    {
+        $this->selectedStudent = Student::findOrFail($id);
+        $this->showDetailsModal = true;
+    }
+
+    public function closeDetailsModal()
+    {
+        $this->showDetailsModal = false;
+        $this->selectedStudent = null;
     }
 
     public function closeModal()

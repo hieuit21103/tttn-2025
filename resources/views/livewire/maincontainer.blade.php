@@ -26,10 +26,6 @@
                                 <i class="fas fa-home me-1"></i>
                                 <span class="d-inline-block">Loại Phòng</span>
                             </a>
-                            <a href="#" wire:click.prevent="setActiveComponent('room.price')" class="nav-link {{ $activeComponent === 'room.price' ? 'active' : '' }} py-2">
-                                <i class="fas fa-money-bill-wave me-1"></i>
-                                <span class="d-inline-block">Mức Phí Phòng</span>
-                            </a>
                             <a href="#" wire:click.prevent="setActiveComponent('violation.list')" class="nav-link {{ $activeComponent === 'violation.list' ? 'active' : '' }} py-2">
                                 <i class="fas fa-exclamation-circle me-1"></i>
                                 <span class="d-inline-block">Vi Phạm Kỷ Luật</span>

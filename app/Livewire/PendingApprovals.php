@@ -17,6 +17,8 @@ class PendingApprovals extends Component
     public $registrations = [];
     public $pagination = [];
     public $currentPage = 1;
+    public $showDetailsModal = false;
+    public $selectedRegistration = null;
 
     public function mount()
     {
@@ -144,6 +146,18 @@ class PendingApprovals extends Component
         } catch (\Exception $e) {
             session()->flash('error', 'Có lỗi xảy ra khi từ chối hồ sơ. Vui lòng thử lại.');
         }
+    }
+
+    public function showDetails($id)
+    {
+        $this->selectedRegistration = DormitoryRegistration::findOrFail($id);
+        $this->showDetailsModal = true;
+    }
+
+    public function closeDetailsModal()
+    {
+        $this->showDetailsModal = false;
+        $this->selectedRegistration = null;
     }
 
     public function updatingSearch()

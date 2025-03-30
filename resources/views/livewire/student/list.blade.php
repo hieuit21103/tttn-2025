@@ -186,12 +186,12 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Hình ảnh CMND/CCCD mặt trước</label>
-                                    <input type="file" class="form-control" wire:model="id_front_image" required>
+                                    <input type="file" class="form-control" wire:model="id_front_image" {{ $editingStudentId ? '' : 'required' }}>
                                     @error('id_front_image') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Hình ảnh CMND/CCCD mặt sau</label>
-                                    <input type="file" class="form-control" wire:model="id_back_image" required>
+                                    <input type="file" class="form-control" wire:model="id_back_image" {{ $editingStudentId ? '' : 'required' }}>
                                     @error('id_back_image') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="mb-3">
@@ -232,6 +232,89 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" wire:click="closeModal">Hủy</button>
                     <button type="button" class="btn btn-danger" wire:click="deleteStudent">Xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Details Modal -->
+    @if($showDetailsModal)
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chi tiết học sinh</h5>
+                    <button type="button" class="btn-close" wire:click="closeDetailsModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Mã học sinh</label>
+                                <input type="text" class="form-control" value="{{ $selectedStudent->student_code }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control" value="{{ $selectedStudent->fullname }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Giới tính</label>
+                                <input type="text" class="form-control" value="{{ $selectedStudent->getGenderLabel() }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Lớp</label>
+                                <input type="text" class="form-control" value="{{ $selectedStudent->class }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Ngày sinh</label>
+                                <input type="text" class="form-control" value="{{ $selectedStudent->birthdate->format('d/m/Y') }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Số CMND/CCCD</label>
+                                <input type="text" class="form-control" value="{{ $selectedStudent->id_number }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại cá nhân</label>
+                                <input type="text" class="form-control" value="{{ $selectedStudent->personal_phone }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại gia đình</label>
+                                <input type="text" class="form-control" value="{{ $selectedStudent->family_phone }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Địa chỉ</label>
+                                <textarea class="form-control" rows="3" readonly>{{ $selectedStudent->address }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" value="{{ $selectedStudent->email }}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Hình ảnh CMND/CCCD mặt trước</label>
+                                @if($selectedStudent->id_front_path)
+                                    <img src="{{ Storage::url($selectedStudent->id_front_path) }}" class="img-fluid" alt="CMND mặt trước">
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Hình ảnh CMND/CCCD mặt sau</label>
+                                @if($selectedStudent->id_back_path)
+                                    <img src="{{ Storage::url($selectedStudent->id_back_path) }}" class="img-fluid" alt="CMND mặt sau">
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" wire:click="closeDetailsModal">Đóng</button>
                 </div>
             </div>
         </div>
