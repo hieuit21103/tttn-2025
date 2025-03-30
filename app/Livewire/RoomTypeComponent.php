@@ -46,14 +46,6 @@ class RoomTypeComponent extends Component
             });
         }
 
-        if ($this->capacity) {
-            $query->where('capacity', $this->capacity);
-        }
-
-        if ($this->monthly_price) {
-            $query->where('monthly_price', $this->monthly_price);
-        }
-
         // Calculate total rooms and pages
         $this->totalRoomTypes = $query->count();
         $this->lastPage = ceil($this->totalRoomTypes / $this->perPage);

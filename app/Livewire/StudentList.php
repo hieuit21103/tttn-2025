@@ -3,24 +3,44 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\Student;
 use App\Models\Room;
-use Illuminate\Support\Facades\Log;
+use App\Models\Student;
 
 class StudentList extends Component
 {
+    public $rooms = [];
     public $students = [];
     public $search = '';
-    public $class = '';
-    public $gender = '';
-    public $hasRoom = '';
     public $totalStudents = 0;
     public $lastPage = 1;
     public $currentPage = 1;
     public $perPage = 10;
+    
+    // Form fields
+    public $student_code = '';
+    public $fullname = '';
+    public $gender = '';
+    public $class = '';
+    public $birthdate = '';
+    public $id_number = '';
+    public $personal_phone = '';
+    public $family_phone = '';
+    public $address = '';
+    public $email = '';
+    public $id_front_path = '';
+    public $id_back_path = '';
+    public $room_id = '';
+    
+    // Modal control properties
+    public $showAddModal = false;
+    public $showEditModal = false;
+    public $showDeleteModal = false;
+    public $editingStudentId = null;
+    public $deletingStudentId = null;
 
     public function mount()
     {
+        $this->rooms = Room::all();
         $this->loadStudents();
     }
 
@@ -32,32 +52,13 @@ class StudentList extends Component
 
         $query = Student::query()
             ->with('room')
-            ->withCount('room')
             ->orderBy('fullname');
 
         if ($this->search) {
-            $query->where(function($q) {
-                $q->where('name', 'like', "%{$this->search}%")
-                    ->orWhere('class', 'like', "%{$this->search}%")
-                    ->orWhere('phone', 'like', "%{$this->search}%");
-            });
+            $query->where('name', 'like', "%{$this->search}%");
         }
 
-        if ($this->class) {
-            $query->where('class', $this->class);
-        }
-
-        if ($this->gender) {
-            $query->where('gender', $this->gender);
-        }
-
-        if ($this->hasRoom === '1') {
-            $query->whereNotNull('room_id');
-        } elseif ($this->hasRoom === '0') {
-            $query->whereNull('room_id');
-        }
-
-        // Calculate total students and pages
+        // Calculate total rooms and pages
         $this->totalStudents = $query->count();
         $this->lastPage = ceil($this->totalStudents / $this->perPage);
         
@@ -100,19 +101,228 @@ class StudentList extends Component
         $this->loadStudents(1);
     }
 
-    public function updatingClass()
+    public function updatingCapacity()
     {
         $this->loadStudents(1);
     }
 
-    public function updatingGender()
+    public function updatingMonthlyPrice()
     {
         $this->loadStudents(1);
     }
 
-    public function updatingHasRoom()
+    public function handleRoomChange($value)
     {
-        $this->loadStudents(1);
+        if ($value) {
+            $room = Room::find($value);
+            if ($room) {
+                $this->monthly_price = $room->monthly_price;
+                $this->capacity = $room->capacity;
+            }
+        }
+    }
+
+    // Modal handling methods
+    public function openAddModal()
+    {
+        $this->resetStudentForm();
+        $this->showAddModal = true;
+    }
+
+    public function openEditModal($id)
+    {
+        $this->editingStudentId = $id;
+        $student = Student::findOrFail($id);
+        $this->student_code = $student->student_code;
+        $this->fullname = $student->fullname;
+        $this->gender = $student->gender;
+        $this->class = $student->class;
+        $this->birthdate = $student->birthdate;
+        $this->id_number = $student->id_number;
+        $this->personal_phone = $student->personal_phone;
+        $this->family_phone = $student->family_phone;
+        $this->address = $student->address;
+        $this->email = $student->email;
+        $this->id_front_path = $student->id_front_path;
+        $this->id_back_path = $student->id_back_path;
+        $this->room_id = $student->room_id;
+        $this->showEditModal = true;
+    }
+
+    public function openDeleteModal($id)
+    {
+        $this->deletingStudentId = $id;
+        $this->showDeleteModal = true;
+    }
+
+    public function closeModal()
+    {
+        $this->showAddModal = false;
+        $this->showEditModal = false;
+        $this->showDeleteModal = false;
+        $this->resetStudentForm();
+    }
+
+    public function resetStudentForm()
+    {
+        $this->student_code = '';
+        $this->fullname = '';
+        $this->gender = '';
+        $this->class = '';
+        $this->id_number = '';
+        $this->personal_phone = '';
+        $this->family_phone = '';
+        $this->address = '';
+        $this->email = '';
+        $this->id_front_path = '';
+        $this->id_back_path = '';
+        $this->room_id = '';
+        $this->editingStudentId = null;
+        $this->deletingStudentId = null;
+        $this->resetValidation();
+    }
+
+    // CRUD operations
+    public function createStudent()
+    {
+        try {
+            $this->validate([
+                'student_code' => 'required|string|max:255|unique:students,student_code',
+                'fullname' => 'required|string|max:255',
+                'gender' => 'required|string|in:Nam,Nữ',
+                'class' => 'required|string|max:255',
+                'birthdate' => 'required|date',
+                'id_number' => 'required|string|max:255|unique:students,id_number',
+                'personal_phone' => 'required|string|max:10',
+                'family_phone' => 'required|string|max:10',
+                'address' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:students,email',
+                'id_front_path' => 'required|string|max:255',
+                'id_back_path' => 'required|string|max:255',
+                'room_id' => 'required|exists:rooms,id'
+            ], [
+                'student_code.required' => 'Mã học sinh là bắt buộc',
+                'student_code.unique' => 'Mã học sinh đã tồn tại',
+                'fullname.required' => 'Họ và tên là bắt buộc',
+                'gender.required' => 'Giới tính là bắt buộc',
+                'gender.in' => 'Giới tính phải là Nam hoặc Nữ',
+                'class.required' => 'Lớp là bắt buộc',
+                'birthdate.required' => 'Ngày sinh là bắt buộc',
+                'id_number.required' => 'Số CMND/CCCD là bắt buộc',
+                'id_number.unique' => 'Số CMND/CCCD đã tồn tại',
+                'personal_phone.required' => 'Số điện thoại cá nhân là bắt buộc',
+                'personal_phone.max' => 'Số điện thoại không được vượt quá 10 ký tự',
+                'family_phone.required' => 'Số điện thoại gia đình là bắt buộc',
+                'family_phone.max' => 'Số điện thoại không được vượt quá 10 ký tự',
+                'address.required' => 'Địa chỉ là bắt buộc',
+                'email.required' => 'Email là bắt buộc',
+                'email.email' => 'Email không hợp lệ',
+                'email.unique' => 'Email đã tồn tại',
+                'id_front_path.required' => 'Hình ảnh mặt trước CMND/CCCD là bắt buộc',
+                'id_back_path.required' => 'Hình ảnh mặt sau CMND/CCCD là bắt buộc',
+                'room_id.required' => 'Phòng là bắt buộc',
+                'room_id.exists' => 'Phòng không tồn tại'
+            ]);
+
+            Student::create([
+                'student_code' => $this->student_code,
+                'fullname' => $this->fullname,
+                'gender' => $this->gender,
+                'class' => $this->class,
+                'birthdate' => $this->birthdate,
+                'id_number' => $this->id_number,
+                'personal_phone' => $this->personal_phone,
+                'family_phone' => $this->family_phone,
+                'address' => $this->address,
+                'email' => $this->email,
+                'id_front_path' => $this->id_front_path,
+                'id_back_path' => $this->id_back_path,
+                'room_id' => $this->room_id
+            ]);
+
+            session()->flash('success', 'Học sinh đã được tạo thành công');
+            $this->closeModal();
+            $this->loadStudents(1);
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+        }
+    }
+    
+    public function updateStudent()
+    {
+        try {
+            $this->validate([
+                'student_code' => 'required|string|max:255|unique:students,student_code,'.$this->editingStudentId,
+                'fullname' => 'required|string|max:255',
+                'gender' => 'required|string|in:Nam,Nữ',
+                'class' => 'required|string|max:255',
+                'birthdate' => 'required|date',
+                'id_number' => 'required|string|max:255',
+                'personal_phone' => 'required|string|max:10',
+                'family_phone' => 'required|string|max:10',
+                'address' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255',
+                'id_front_path' => 'required|string|max:255',
+                'id_back_path' => 'required|string|max:255',
+                'room_id' => 'required|exists:rooms,id'
+            ], [
+                'student_code.required' => 'Mã học sinh là bắt buộc',
+                'student_code.unique' => 'Mã học sinh đã tồn tại',
+                'fullname.required' => 'Họ và tên là bắt buộc',
+                'gender.required' => 'Giới tính là bắt buộc',
+                'gender.in' => 'Giới tính phải là Nam hoặc Nữ',
+                'class.required' => 'Lớp là bắt buộc',
+                'birthdate.required' => 'Ngày sinh là bắt buộc',
+                'id_number.required' => 'Số CMND/CCCD là bắt buộc',
+                'id_number.unique' => 'Số CMND/CCCD đã tồn tại',
+                'personal_phone.required' => 'Số điện thoại cá nhân là bắt buộc',
+                'family_phone.required' => 'Số điện thoại gia đình là bắt buộc',
+                'address.required' => 'Địa chỉ là bắt buộc',
+                'email.required' => 'Email là bắt buộc',
+                'email.email' => 'Email không hợp lệ',
+                'id_front_path.required' => 'Hình ảnh mặt trước CMND/CCCD là bắt buộc',
+                'id_back_path.required' => 'Hình ảnh mặt sau CMND/CCCD là bắt buộc',
+                'room_id.required' => 'Phòng là bắt buộc',
+                'room_id.exists' => 'Phòng không tồn tại'
+            ]);
+
+            $student = Student::findOrFail($this->editingStudentId);
+            $student->update([
+                'student_code' => $this->student_code,
+                'fullname' => $this->fullname,
+                'gender' => $this->gender,
+                'class' => $this->class,
+                'birthdate' => $this->birthdate,
+                'id_number' => $this->id_number,
+                'personal_phone' => $this->personal_phone,
+                'family_phone' => $this->family_phone,
+                'address' => $this->address,
+                'email' => $this->email,
+                'id_front_path' => $this->id_front_path,
+                'id_back_path' => $this->id_back_path,
+                'room_id' => $this->room_id
+            ]);
+
+            session()->flash('success', 'Học sinh đã được cập nhật thành công');
+            $this->closeModal();
+            $this->loadStudents($this->currentPage);
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+        }
+    }
+
+    public function deleteStudent()
+    {
+        try {
+            $student = Student::findOrFail($this->deletingStudentId);
+            $student->delete();
+
+            session()->flash('success', 'Học sinh đã được xóa thành công');
+            $this->closeModal();
+            $this->loadStudents($this->currentPage);
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+        }
     }
 
     public function render()

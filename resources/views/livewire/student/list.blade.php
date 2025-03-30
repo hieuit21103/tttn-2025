@@ -2,7 +2,7 @@
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Danh sách sinh viên</h2>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#studentModal">
+        <button type="button" class="btn btn-primary" wire:click="openAddModal">
             <i class="fas fa-plus me-2"></i> Thêm học sinh mới
         </button>
     </div>
@@ -16,23 +16,11 @@
                     <input type="text" class="form-control" wire:model="search" placeholder="Tìm theo mã học sinh, tên hoặc lớp...">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Lớp</label>
-                    <input type="text" class="form-control" wire:model="class" placeholder="Nhập tên lớp">
-                </div>
-                <div class="col-md-3">
                     <label class="form-label">Giới tính</label>
                     <select class="form-select" wire:model="gender">
                         <option value="">Tất cả</option>
                         <option value="Nam">Nam</option>
                         <option value="Nữ">Nữ</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Trạng thái phòng</label>
-                    <select class="form-select" wire:model="hasRoom">
-                        <option value="">Tất cả</option>
-                        <option value="1">Đã có phòng</option>
-                        <option value="0">Chưa có phòng</option>
                     </select>
                 </div>
             </form>
@@ -65,9 +53,15 @@
                             <td>{{ $student->getGenderLabel() }}</td>
                             <td>{{ $student->class }}</td>
                             <td>
-                                <span class="badge bg-{{ $student->hasRoom() ? 'success' : 'warning' }}">
-                                    {{ $student->hasRoom() ? 'Đã có phòng' : 'Chưa có phòng' }}
-                                </span>
+                                @if($student->room)
+                                    <span class="badge bg-success">
+                                        {{ $student->room->name }}
+                                    </span>
+                                @else
+                                    <span class="badge bg-warning">
+                                        Chưa có phòng
+                                    </span>
+                                @endif
                             </td>
                             <td>{{ $student->birthdate->format('d/m/Y') }}</td>
                             <td>{{ $student->address }}</td>
@@ -80,10 +74,10 @@
                                 <button class="btn btn-sm btn-info" title="Xem chi tiết" wire:click="showDetails({{ $student->id }})">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn btn-sm btn-warning" title="Chỉnh sửa" wire:click="showEditModal({{ $student->id }})">
+                                <button class="btn btn-sm btn-warning" title="Chỉnh sửa" wire:click="openEditModal({{ $student->id }})">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger" title="Xóa" wire:click="confirmDelete({{ $student->id }})">
+                                <button class="btn btn-sm btn-danger" title="Xóa" wire:click="openDeleteModal({{ $student->id }})">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -130,64 +124,121 @@
     </div>
 
     <!-- Add Student Modal -->
-    <div class="modal fade" id="studentModal" tabindex="-1">
+    @if($showAddModal || $showEditModal)
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Thêm học sinh mới</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" wire:click="closeModal"></button>
                 </div>
-                <div class="modal-body">
-                    <form wire:submit.prevent="createStudent">
-                        <div class="mb-3">
-                            <label class="form-label">Mã học sinh</label>
-                            <input type="text" class="form-control" wire:model="student.student_code" required>
-                            @error('student.student_code') <span class="text-danger">{{ $message }}</span> @enderror
+                <form wire:submit.prevent="@if($editingStudentId) updateStudent @else createStudent @endif">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Mã học sinh</label>
+                                    <input type="text" class="form-control" wire:model="student_code" required>
+                                    @error('student_code') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Họ và tên</label>
+                                    <input type="text" class="form-control" wire:model="fullname" required>
+                                    @error('fullname') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Giới tính</label>
+                                    <select class="form-select" wire:model="gender" required>
+                                        <option value="">Chọn giới tính</option>
+                                        <option value="Nam">Nam</option>
+                                        <option value="Nữ">Nữ</option>
+                                    </select>
+                                    @error('gender') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Lớp</label>
+                                    <input type="text" class="form-control" wire:model="class" required>
+                                    @error('class') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Ngày sinh</label>
+                                    <input type="date" class="form-control" wire:model="birthdate" required>
+                                    @error('birthdate') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Số CMND/CCCD</label>
+                                    <input type="text" class="form-control" wire:model="id_number" required>
+                                    @error('id_number') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Số điện thoại cá nhân</label>
+                                    <input type="text" class="form-control" wire:model="personal_phone" required>
+                                    @error('personal_phone') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Số điện thoại gia đình</label>
+                                    <input type="text" class="form-control" wire:model="family_phone" required>
+                                    @error('family_phone') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Địa chỉ</label>
+                                    <textarea class="form-control" wire:model="address" required></textarea>
+                                    @error('address') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" wire:model="email" required>
+                                    @error('email') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Hình ảnh CMND/CCCD mặt trước</label>
+                                    <input type="text" class="form-control" wire:model="id_front_path" required>
+                                    @error('id_front_path') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Hình ảnh CMND/CCCD mặt sau</label>
+                                    <input type="text" class="form-control" wire:model="id_back_path" required>
+                                    @error('id_back_path') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phòng</label>
+                                    <select class="form-select" wire:model="room_id" required>
+                                        <option value="">Chọn phòng</option>
+                                        @foreach($rooms as $room)
+                                            <option value="{{ $room->id }}">{{ $room->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('room_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Họ và tên</label>
-                            <input type="text" class="form-control" wire:model="student.fullname" required>
-                            @error('student.fullname') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Lớp</label>
-                            <input type="text" class="form-control" wire:model="student.class" required>
-                            @error('student.class') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Giới tính</label>
-                            <select class="form-select" wire:model="student.gender">
-                                <option value="">Chọn giới tính</option>
-                                <option value="Nam">Nam</option>
-                                <option value="Nữ">Nữ</option>
-                            </select>
-                            @error('student.gender') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Ngày sinh</label>
-                            <input type="date" class="form-control" wire:model="student.birthdate" required>
-                            @error('student.birthdate') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Địa chỉ</label>
-                            <textarea class="form-control" wire:model="student.address" required></textarea>
-                            @error('student.address') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Số điện thoại</label>
-                            <input type="tel" class="form-control" wire:model="student.phone" required>
-                            @error('student.phone') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" wire:model="student.email" required>
-                            @error('student.email') <span class="text-danger">{{ $message }}</span> @enderror
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" wire:click="closeModal">Đóng</button>
+                            <button type="submit" class="btn btn-primary">Lưu</button>
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Delete Confirmation Modal -->
+    <div wire:ignore.self class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa</h5>
+                    <button type="button" class="btn-close" wire:click="closeModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa học sinh này không?</p>
+                </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-primary" wire:click="createStudent">Lưu</button>
+                    <button type="button" class="btn btn-secondary" wire:click="closeModal">Hủy</button>
+                    <button type="button" class="btn btn-danger" wire:click="deleteStudent">Xóa</button>
                 </div>
             </div>
         </div>
