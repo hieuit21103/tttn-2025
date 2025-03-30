@@ -51,3 +51,5 @@ Route::group(['middleware' => 'auth'], function () {
         return view('dashboard');
     })->name('home');
 });
+
+Route::get('/activate/{token}', [AccountActivationController::class, 'activate'])->name('activate');

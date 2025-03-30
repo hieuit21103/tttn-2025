@@ -6,7 +6,6 @@ use Livewire\Component;
 use App\Models\DormitoryRegistration;
 use App\Models\Student;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\AccountActivationNotification;
 use App\Mail\RegistrationApprovalNotification;
 use Illuminate\Support\Str;
 use App\Mail\RegistrationRejectionNotification;
@@ -26,7 +25,7 @@ class PendingApprovals extends Component
 
     public function loadRegistrations($page = 1)
     {
-        $query = DormitoryRegistration::where('status', 1);
+        $query = DormitoryRegistration::where('status', 'pending');
 
         if ($this->search) {
             $query->where(function($q) {
@@ -110,22 +109,17 @@ class PendingApprovals extends Component
                 'activated_at' => now()
             ]);
 
-            // Generate activation URL
-            $activationUrl = route('activate', $registration->activation_token);
+                Mail::to($registration->email)->send(new RegistrationApprovalNotification($registration));
+                
+                
+                $activationUrl = route('activate', $registration->activation_token);
 
-            // Send activation email
-            Mail::to($registration->email)->send(new AccountActivationNotification($registration, $activationUrl));
+                $this->loadRegistrations($this->currentPage);
 
-            // Send approval notification
-            Mail::to($registration->email)->send(new RegistrationApprovalNotification($registration));
-
-            // Reload data
-            $this->loadRegistrations($this->currentPage);
-
-            session()->flash('success', 'Đã duyệt hồ sơ thành công. Email kích hoạt và thông báo đã được gửi đến người dùng.');
-        } catch (\Exception $e) {
-            session()->flash('error', 'Có lỗi xảy ra khi duyệt hồ sơ. Vui lòng thử lại.');
-        }
+                session()->flash('success', 'Đã duyệt hồ sơ thành công. Email thông báo đã được gửi đến người dùng.');
+            } catch (\Exception $e) {
+                session()->flash('error', 'Có lỗi xảy ra khi duyệt hồ sơ: ' . $e->getMessage());
+            }
     }
 
     public function reject($id)
