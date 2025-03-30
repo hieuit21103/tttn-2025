@@ -15,14 +15,6 @@
                     <label class="form-label">Tìm kiếm</label>
                     <input type="text" class="form-control" wire:model="search" placeholder="Tìm theo mã học sinh, tên hoặc lớp...">
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Giới tính</label>
-                    <select class="form-select" wire:model="gender">
-                        <option value="">Tất cả</option>
-                        <option value="Nam">Nam</option>
-                        <option value="Nữ">Nữ</option>
-                    </select>
-                </div>
             </form>
         </div>
     </div>
@@ -55,7 +47,7 @@
                             <td>
                                 @if($student->room)
                                     <span class="badge bg-success">
-                                        {{ $student->room->name }}
+                                        Phòng {{ $student->room->name }}
                                     </span>
                                 @else
                                     <span class="badge bg-warning">
@@ -194,13 +186,13 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Hình ảnh CMND/CCCD mặt trước</label>
-                                    <input type="text" class="form-control" wire:model="id_front_path" required>
-                                    @error('id_front_path') <span class="text-danger">{{ $message }}</span> @enderror
+                                    <input type="file" class="form-control" wire:model="id_front_image" required>
+                                    @error('id_front_image') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Hình ảnh CMND/CCCD mặt sau</label>
-                                    <input type="text" class="form-control" wire:model="id_back_path" required>
-                                    @error('id_back_path') <span class="text-danger">{{ $message }}</span> @enderror
+                                    <input type="file" class="form-control" wire:model="id_back_image" required>
+                                    @error('id_back_image') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Phòng</label>

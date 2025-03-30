@@ -60,14 +60,12 @@
                                     <td>{{ $type->created_at->format('d/m/Y H:i') }}</td>
                                     <td>{{ $type->updated_at->format('d/m/Y H:i') }}</td>
                                     <td>
-                                        <div class="btn-group">
-                                            <button class="btn btn-sm btn-primary" wire:click="openEditModal({{ $type->id }})" title="Chỉnh sửa">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" wire:click="openDeleteModal({{ $type->id }})" title="Xóa">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
+                                        <button class="btn btn-sm btn-warning" wire:click="openEditModal({{ $type->id }})" title="Chỉnh sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" wire:click="openDeleteModal({{ $type->id }})" title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                                 @empty

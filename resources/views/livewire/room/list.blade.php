@@ -70,17 +70,15 @@
                                     <td>{{ $room->created_at->format('d/m/Y H:i') }}</td>
                                     <td>{{ $room->updated_at->format('d/m/Y H:i') }}</td>
                                     <td>
-                                        <div class="btn-group">
-                                            <button class="btn btn-sm btn-primary" wire:click="viewDetail({{ $room->id }})" title="Xem chi tiết">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-primary" wire:click="openEditModal({{ $room->id }})" title="Chỉnh sửa">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" wire:click="openDeleteModal({{ $room->id }})" title="Xóa">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
+                                        <button class="btn btn-sm btn-info" wire:click="viewDetail({{ $room->id }})" title="Xem chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-warning" wire:click="openEditModal({{ $room->id }})" title="Chỉnh sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" wire:click="openDeleteModal({{ $room->id }})" title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                                 @empty

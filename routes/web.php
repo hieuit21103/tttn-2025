@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\AccountActivationController;
 use App\Http\Controllers\DormitoryController;
+use App\Http\Controllers\StorageController;
 
 Route::get('/', function () {
     return view('index');
@@ -23,6 +24,11 @@ Route::get('/login',function(){
 Route::post('/login',[LoginController::class,'login'])->name('login');
 
 Route::get('/logout',[LogoutController::class,'logout'])->name('logout');
+
+Route::get('/storage/{path}', [StorageController::class, 'show'])
+    ->where('path', '.*')
+    ->name('storage')
+    ->middleware(['auth', 'admin']);
 
 Route::get('/api/address-data', function () {
     $path = public_path('data/vietnam-divisions.json');

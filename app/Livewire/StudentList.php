@@ -3,11 +3,15 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use App\Models\Room;
 use App\Models\Student;
+use Illuminate\Support\Facades\Storage;
 
 class StudentList extends Component
 {
+    use WithFileUploads;
+
     public $rooms = [];
     public $students = [];
     public $search = '';
@@ -27,8 +31,8 @@ class StudentList extends Component
     public $family_phone = '';
     public $address = '';
     public $email = '';
-    public $id_front_path = '';
-    public $id_back_path = '';
+    public $id_front_image = '';
+    public $id_back_image = '';
     public $room_id = '';
     
     // Modal control properties
@@ -143,8 +147,8 @@ class StudentList extends Component
         $this->family_phone = $student->family_phone;
         $this->address = $student->address;
         $this->email = $student->email;
-        $this->id_front_path = $student->id_front_path;
-        $this->id_back_path = $student->id_back_path;
+        $this->id_front_image = '';
+        $this->id_back_image = '';
         $this->room_id = $student->room_id;
         $this->showEditModal = true;
     }
@@ -174,8 +178,8 @@ class StudentList extends Component
         $this->family_phone = '';
         $this->address = '';
         $this->email = '';
-        $this->id_front_path = '';
-        $this->id_back_path = '';
+        $this->id_front_image = '';
+        $this->id_back_image = '';
         $this->room_id = '';
         $this->editingStudentId = null;
         $this->deletingStudentId = null;
@@ -197,8 +201,8 @@ class StudentList extends Component
                 'family_phone' => 'required|string|max:10',
                 'address' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:students,email',
-                'id_front_path' => 'required|string|max:255',
-                'id_back_path' => 'required|string|max:255',
+                'id_front_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'id_back_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 'room_id' => 'required|exists:rooms,id'
             ], [
                 'student_code.required' => 'Mã học sinh là bắt buộc',
@@ -218,11 +222,21 @@ class StudentList extends Component
                 'email.required' => 'Email là bắt buộc',
                 'email.email' => 'Email không hợp lệ',
                 'email.unique' => 'Email đã tồn tại',
-                'id_front_path.required' => 'Hình ảnh mặt trước CMND/CCCD là bắt buộc',
-                'id_back_path.required' => 'Hình ảnh mặt sau CMND/CCCD là bắt buộc',
+                'id_front_image.required' => 'Hình ảnh mặt trước CMND/CCCD là bắt buộc',
+                'id_front_image.image' => 'File phải là hình ảnh',
+                'id_front_image.mimes' => 'Chỉ chấp nhận file JPEG, PNG, JPG',
+                'id_front_image.max' => 'Kích thước file không được vượt quá 2MB',
+                'id_back_image.required' => 'Hình ảnh mặt sau CMND/CCCD là bắt buộc',
+                'id_back_image.image' => 'File phải là hình ảnh',
+                'id_back_image.mimes' => 'Chỉ chấp nhận file JPEG, PNG, JPG',
+                'id_back_image.max' => 'Kích thước file không được vượt quá 2MB',
                 'room_id.required' => 'Phòng là bắt buộc',
                 'room_id.exists' => 'Phòng không tồn tại'
             ]);
+
+            // Upload hình ảnh CMND
+            $idFrontPath = $this->id_front_image->store('students/id_cards/front', 'private');
+            $idBackPath = $this->id_back_image->store('students/id_cards/back', 'private');
 
             Student::create([
                 'student_code' => $this->student_code,
@@ -235,8 +249,8 @@ class StudentList extends Component
                 'family_phone' => $this->family_phone,
                 'address' => $this->address,
                 'email' => $this->email,
-                'id_front_path' => $this->id_front_path,
-                'id_back_path' => $this->id_back_path,
+                'id_front_path' => $idFrontPath,
+                'id_back_path' => $idBackPath,
                 'room_id' => $this->room_id
             ]);
 
@@ -247,7 +261,7 @@ class StudentList extends Component
             session()->flash('error', $e->getMessage());
         }
     }
-    
+
     public function updateStudent()
     {
         try {
@@ -257,13 +271,13 @@ class StudentList extends Component
                 'gender' => 'required|string|in:Nam,Nữ',
                 'class' => 'required|string|max:255',
                 'birthdate' => 'required|date',
-                'id_number' => 'required|string|max:255',
+                'id_number' => 'required|string|max:255|unique:students,id_number,'.$this->editingStudentId,
                 'personal_phone' => 'required|string|max:10',
                 'family_phone' => 'required|string|max:10',
                 'address' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255',
-                'id_front_path' => 'required|string|max:255',
-                'id_back_path' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:students,email,'.$this->editingStudentId,
+                'id_front_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'id_back_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'room_id' => 'required|exists:rooms,id'
             ], [
                 'student_code.required' => 'Mã học sinh là bắt buộc',
@@ -276,17 +290,36 @@ class StudentList extends Component
                 'id_number.required' => 'Số CMND/CCCD là bắt buộc',
                 'id_number.unique' => 'Số CMND/CCCD đã tồn tại',
                 'personal_phone.required' => 'Số điện thoại cá nhân là bắt buộc',
+                'personal_phone.max' => 'Số điện thoại không được vượt quá 10 ký tự',
                 'family_phone.required' => 'Số điện thoại gia đình là bắt buộc',
+                'family_phone.max' => 'Số điện thoại không được vượt quá 10 ký tự',
                 'address.required' => 'Địa chỉ là bắt buộc',
                 'email.required' => 'Email là bắt buộc',
                 'email.email' => 'Email không hợp lệ',
-                'id_front_path.required' => 'Hình ảnh mặt trước CMND/CCCD là bắt buộc',
-                'id_back_path.required' => 'Hình ảnh mặt sau CMND/CCCD là bắt buộc',
+                'email.unique' => 'Email đã tồn tại',
+                'id_front_image.image' => 'File phải là hình ảnh',
+                'id_front_image.mimes' => 'Chỉ chấp nhận file JPEG, PNG, JPG',
+                'id_front_image.max' => 'Kích thước file không được vượt quá 2MB',
+                'id_back_image.image' => 'File phải là hình ảnh',
+                'id_back_image.mimes' => 'Chỉ chấp nhận file JPEG, PNG, JPG',
+                'id_back_image.max' => 'Kích thước file không được vượt quá 2MB',
                 'room_id.required' => 'Phòng là bắt buộc',
                 'room_id.exists' => 'Phòng không tồn tại'
             ]);
 
             $student = Student::findOrFail($this->editingStudentId);
+
+            // Xóa hình ảnh cũ nếu có upload mới
+            if ($this->id_front_image) {
+                Storage::disk('private')->delete($student->id_front_path);
+                $student->id_front_path = $this->id_front_image->store('students/id_cards/front', 'private');
+            }
+
+            if ($this->id_back_image) {
+                Storage::disk('private')->delete($student->id_back_path);
+                $student->id_back_path = $this->id_back_image->store('students/id_cards/back', 'private');
+            }
+
             $student->update([
                 'student_code' => $this->student_code,
                 'fullname' => $this->fullname,
@@ -298,8 +331,6 @@ class StudentList extends Component
                 'family_phone' => $this->family_phone,
                 'address' => $this->address,
                 'email' => $this->email,
-                'id_front_path' => $this->id_front_path,
-                'id_back_path' => $this->id_back_path,
                 'room_id' => $this->room_id
             ]);
 

@@ -26,7 +26,7 @@ class PendingApprovals extends Component
 
     public function loadRegistrations($page = 1)
     {
-        $query = DormitoryRegistration::where('status', 'pending');
+        $query = DormitoryRegistration::where('status', 1);
 
         if ($this->search) {
             $query->where(function($q) {

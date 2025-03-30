@@ -50,8 +50,8 @@ class DormitoryController extends Controller
         }
 
         try {
-            $id_front_path = $request->file('id_front')->store('public/id_cards');
-            $id_back_path = $request->file('id_back')->store('public/id_cards');
+            $id_front_path = $request->file('id_front')->store('students/id_cards/front', 'private');
+            $id_back_path = $request->file('id_back')->store('students/id_cards/back', 'private');
 
             $full_address = $request->address_detail . ', ' . 
                            $request->ward . ', ' . 
@@ -76,14 +76,12 @@ class DormitoryController extends Controller
 
             $registration->save();
 
-            // Send email notification
             Mail::to($request->email)->send(new DormitoryRegistrationNotification($registration));
 
             return redirect()->back()
                 ->with('success', 'Đăng ký ký túc xá thành công! Chúng tôi đã gửi thông tin xác nhận đến email của bạn.');
 
         } catch (\Exception $e) {
-            // Delete uploaded files if registration fails
             if (isset($id_front_path)) {
                 Storage::delete($id_front_path);
             }
@@ -92,7 +90,7 @@ class DormitoryController extends Controller
             }
 
             return redirect()->back()
-                ->with('error', 'Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau.');
+                ->with('error', $e->getMessage());
         }
     }
 }

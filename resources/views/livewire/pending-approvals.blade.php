@@ -58,17 +58,15 @@
                                 </span>
                             </td>
                             <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-sm btn-info" title="Xem chi tiết" data-bs-toggle="modal" data-bs-target="#viewModal{{ $registration->id }}">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-success" title="Duyệt" wire:click="approve({{ $registration->id }})" wire:loading.attr="disabled" wire:target="approve({{ $registration->id }})">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" title="Từ chối" wire:click="reject({{ $registration->id }})" wire:loading.attr="disabled" wire:target="reject({{ $registration->id }})">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
+                                <button class="btn btn-sm btn-info" title="Xem chi tiết" data-bs-toggle="modal" data-bs-target="#viewModal{{ $registration->id }}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" title="Duyệt" wire:click="approve({{ $registration->id }})" wire:loading.attr="disabled" wire:target="approve({{ $registration->id }})">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" title="Từ chối" wire:click="reject({{ $registration->id }})" wire:loading.attr="disabled" wire:target="reject({{ $registration->id }})">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </td>
                         </tr>
 
@@ -99,11 +97,11 @@
                                         <div class="row mt-3">
                                             <div class="col-md-6">
                                                 <h6>Ảnh CCCD Mặt Trước</h6>
-                                                <img src="{{ asset('storage/' . $registration->id_front_path) }}" class="img-fluid" alt="CMND Mặt Trước">
+                                                <img src="{{ route('storage', ['path' => $registration->id_front_path]) }}" class="img-fluid" alt="CMND Mặt Trước">
                                             </div>
                                             <div class="col-md-6">
                                                 <h6>Ảnh CCCD Mặt Sau</h6>
-                                                <img src="{{ asset('storage/' . $registration->id_back_path) }}" class="img-fluid" alt="CMND Mặt Sau">
+                                                <img src="{{ route('storage', ['path' => $registration->id_back_path]) }}" class="img-fluid" alt="CMND Mặt Sau">
                                             </div>
                                         </div>
                                     </div>
