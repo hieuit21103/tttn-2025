@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('room_type_id')->constrained()->onDelete('cascade');
             $table->integer('capacity');
+            $table->decimal('monthly_price', 10, 2);
             $table->integer('current_occupancy')->default(0);
             $table->enum('status', ['available', 'full', 'maintenance'])->default('available');
             $table->timestamps();

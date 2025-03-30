@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('id_front_path');
             $table->string('id_back_path');
+            $table->foreignId('room_id')->nullable()->constrained('rooms')->onDelete('set null');
             $table->timestamp('registered_at');
             $table->timestamp('activated_at')->nullable();
             $table->timestamps();

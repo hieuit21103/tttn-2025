@@ -50,13 +50,24 @@ DB_PASSWORD=your_database_password
 php artisan migrate
 ```
 
-6. Install Frontend Dependencies
+6. Create Default Admin Account
+```bash
+php artisan db:seed
+```
+
+The default admin account credentials are:
+- username: admin
+- password: password
+
+After logging in, it is recommended to change the default password immediately.
+
+7. Install Frontend Dependencies
 ```bash
 npm install
 npm run dev
 ```
 
-7. Start the Development Server
+8. Start the Development Server
 ```bash
 php artisan serve
 ```
@@ -64,6 +75,17 @@ php artisan serve
 ## Additional Configuration
 - Check and set up any additional environment-specific configurations in the `.env` file
 - Run `php artisan config:clear` if you make any changes to configuration files
+
+## Create Additional Users
+To create additional users with specific roles, use the following command:
+```bash
+php artisan create:user --email="user@example.com" --role="admin|user"
+```
+
+Available roles:
+- admin: Full system access
+- manager: Dormitory management access
+- staff: Basic user access
 
 ## Troubleshooting
 - Ensure all PHP extensions required by Laravel are installed

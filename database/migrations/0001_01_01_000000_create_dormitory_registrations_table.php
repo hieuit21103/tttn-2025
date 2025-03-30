@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('student_code')->unique();
             $table->string('fullname');
+            $table->enum('gender', ['Nam', 'Nữ']);
             $table->date('birthdate');
             $table->string('class');
             $table->string('id_number')->unique();
