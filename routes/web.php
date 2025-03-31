@@ -48,6 +48,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home',function(){
         return view('dashboard');
     })->name('home');
+
+    Route::get('/profile', function () {
+        return view('profile');
+    })->name('profile');
 });
 
 Route::get('/activate/{token}', [AccountActivationController::class, 'activate'])->name('activate');

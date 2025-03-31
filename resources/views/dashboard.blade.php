@@ -14,18 +14,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto d-flex align-items-center">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {{ Auth::user()->name }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user-circle me-2"></i> Tài khoản
+                                <a class="dropdown-item" href="{{ route('profile') }}">
+                                    <i class="fas fa-user me-2"></i>Thông tin cá nhân
                                 </a>
                             </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item" href="{{ route('logout') }}">
-                                    <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+                                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                 </a>
                             </li>
                         </ul>
