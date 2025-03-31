@@ -9,9 +9,7 @@ use App\Http\Controllers\AccountActivationController;
 use App\Http\Controllers\DormitoryController;
 use App\Http\Controllers\StorageController;
 
-Route::get('/', function () {
-    return view('index');
-})->name('index');
+Route::get('/', [DormitoryController::class, 'index'])->name('index');
 
 Route::get('/forms/{filename}', function ($filename) {
     return response()->download(storage_path('app/public/forms/' . $filename));

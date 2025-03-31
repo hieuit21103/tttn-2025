@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DormitoryRegistrationNotification;
 use App\Models\DormitoryRegistration;
+use App\Models\ClassModel;
 
 class DormitoryController extends Controller
 {
@@ -92,5 +93,11 @@ class DormitoryController extends Controller
             return redirect()->back()
                 ->with('error', $e->getMessage());
         }
+    }
+
+    public function index()
+    {
+        $classes = ClassModel::all();
+        return view('index', compact('classes'));
     }
 }

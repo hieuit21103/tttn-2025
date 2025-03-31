@@ -257,7 +257,14 @@
                                         <label class="form-label">Lớp</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
-                                            <input type="text" class="form-control @error('class') is-invalid @enderror" name="class" value="{{ old('class') }}" required>
+                                            <select class="form-select @error('class') is-invalid @enderror" name="class" required>
+                                                <option value="">Chọn lớp</option>
+                                                @foreach($classes as $class)
+                                                    <option value="{{ $class->code }}" {{ old('class') == $class->code ? 'selected' : '' }}>
+                                                        {{ $class->name }} ({{ $class->code }})
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                             @error('class')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
