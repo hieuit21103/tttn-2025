@@ -95,6 +95,54 @@
     </div>
     </section>
 
+    <!-- Dormitory Features -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Tiện Ích KTX</h2>
+                <hr class="w-25 mx-auto">
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card feature-card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <h4 class="card-title">An Ninh 24/7</h4>
+                            <p class="card-text">Hệ thống an ninh hiện đại với nhân viên bảo vệ trực 24/7, đảm bảo sự an toàn cho sinh viên.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card feature-card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon">
+                                <i class="bi bi-wifi"></i>
+                            </div>
+                            <h4 class="card-title">Internet Tốc Độ Cao</h4>
+                            <p class="card-text">Kết nối internet nhanh chóng, ổn định giúp sinh viên học tập và giải trí thuận lợi.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card feature-card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="feature-icon">
+                                <i class="bi bi-book"></i>
+                            </div>
+                            <h4 class="card-title">Phòng Học Tập</h4>
+                            <p class="card-text">Không gian học tập yên tĩnh, thoáng mát với đầy đủ trang thiết bị học tập cần thiết.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     @guest
     <!-- Registration Process -->
     <section id="registration" class="py-5">
@@ -383,16 +431,18 @@
                                     <div class="form-check">
                                         <input class="form-check-input @error('dormitory_rules') is-invalid @enderror" type="checkbox" name="dormitory_rules" id="dormitory_rules" required>
                                         <label class="form-check-label" for="dormitory_rules">
-                                            Tôi đã đọc và đồng ý với quy định ký túc xá
+                                            Tôi đã đọc và đồng ý với <a href="{{ asset('documents/noi-quy.pdf') }}" target="_blank"><i class="fas fa-file-pdf"></i> quy định ký túc xá</a>
                                         </label>
                                         @error('dormitory_rules')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                           <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                                 
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-primary btn-lg" id="registerBtn">Đăng Ký</button>
+                                    <button type="submit" class="btn btn-primary btn-lg" id="registerBtn">
+                                        <i class="fas fa-paper-plane me-2"></i>Đăng Ký
+                                    </button>
                                 </div>
                             </form>
                         </div>
