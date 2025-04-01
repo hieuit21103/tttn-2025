@@ -63,6 +63,9 @@
                                 </span>
                             </td>
                             <td>
+                                <button class="btn btn-sm btn-success" title="Xếp phòng" wire:click="openAssignRoomModal({{ $student->id }})">
+                                    <i class="fas fa-user-plus"></i>
+                                </button>
                                 <button class="btn btn-sm btn-info" title="Xem chi tiết" wire:click="showDetails({{ $student->id }})">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -319,5 +322,44 @@
             </div>
         </div>
     </div>
+    @endif
+
+    <!-- Assign Room Modal -->
+    @if($showAssignRoomModal)
+        <div class="modal fade" wire:ignore.self tabindex="-1" role="dialog" aria-labelledby="assignRoomModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="assignRoomModalLabel">Xếp phòng</h5>
+                        <button type="button" class="close" wire:click="closeAssignRoomModal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="room_id">Chọn phòng</label>
+                            <select class="form-control" wire:model="room_id">
+                                <option value="">-- Chọn phòng --</option>
+                                @foreach($availableRooms as $room)
+                                    <option value="{{ $room->id }}" data-status="{{ $room->status }}" data-occupancy="{{ $room->current_occupancy }}" data-capacity="{{ $room->capacity }}">
+                                        {{ $room->name }} - {{ $room->roomType->name }}
+                                        <span class="badge bg-{{ $room->status === 'available' ? 'success' : 'warning' }}">
+                                            {{ $room->status === 'available' ? 'Còn trống' : 'Đang chờ' }}
+                                        </span>
+                                        <small class="text-muted">
+                                            {{ $room->current_occupancy }}/{{ $room->capacity }}
+                                        </small>
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" wire:click="closeAssignRoomModal">Đóng</button>
+                        <button type="button" class="btn btn-primary" wire:click="assignRoom">Xác nhận</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     @endif
 </div>

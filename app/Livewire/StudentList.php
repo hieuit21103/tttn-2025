@@ -7,6 +7,7 @@ use Livewire\WithFileUploads;
 use App\Models\Room;
 use App\Models\Student;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class StudentList extends Component
 {
@@ -19,6 +20,7 @@ class StudentList extends Component
     public $lastPage = 1;
     public $currentPage = 1;
     public $perPage = 10;
+    public $availableRooms = [];
     
     // Form fields
     public $student_code = '';
@@ -38,15 +40,20 @@ class StudentList extends Component
     // Modal control properties
     public $showAddModal = false;
     public $showEditModal = false;
+    public $showAssignRoomModal = false;
     public $showDeleteModal = false;
     public $showDetailsModal = false;
     public $editingStudentId = null;
     public $deletingStudentId = null;
     public $selectedStudent = null;
+    public $assigningStudentId = null;
 
     public function mount()
     {
         $this->rooms = Room::all();
+        $this->availableRooms = Room::where('status', 'available')
+            ->with('roomType')
+            ->get();
         $this->loadStudents();
     }
 
@@ -159,6 +166,15 @@ class StudentList extends Component
     {
         $this->deletingStudentId = $id;
         $this->showDeleteModal = true;
+    }
+
+    public function openAssignRoomModal($id)
+    {
+        $this->assigningStudentId = $id;
+        $this->availableRooms = Room::where('status', 'available')
+            ->with('roomType')
+            ->get();
+        $this->showAssignRoomModal = true;
     }
 
     public function showDetails($id)
@@ -368,6 +384,51 @@ class StudentList extends Component
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         }
+    }
+
+    public function assignRoom()
+    {
+        if (!$this->room_id) {
+            $this->dispatch('error', 'Vui lòng chọn phòng!');
+            return;
+        }
+
+        try {
+            $room = Room::findOrFail($this->room_id);
+            $student = Student::findOrFail($this->assigningStudentId);
+
+            if (!$room->isAvailable()) {
+                $this->dispatch('error', 'Phòng đã đầy hoặc không còn trống!');
+                return;
+            }
+
+            DB::beginTransaction();
+            
+            $student->room_id = $this->room_id;
+            $student->save();
+
+            $room->current_occupancy += 1;
+            if ($room->current_occupancy >= $room->capacity) {
+                $room->status = 'pending';
+            }
+            $room->save();
+
+            DB::commit();
+
+            $this->dispatch('success', 'Đã xếp phòng thành công!');
+            $this->closeAssignRoomModal();
+            $this->loadStudents();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->dispatch('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+        }
+    }
+
+    public function closeAssignRoomModal()
+    {
+        $this->assigningStudentId = null;
+        $this->room_id = null;
+        $this->showAssignRoomModal = false;
     }
 
     public function render()

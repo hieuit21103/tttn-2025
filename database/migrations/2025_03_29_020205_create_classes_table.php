@@ -10,8 +10,11 @@ return new class extends Migration
     {
         Schema::create('classes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('faculty_id')->nullable()->constrained('faculties')->onDelete('set null');
             $table->string('code')->unique();
             $table->string('name');
+            $table->integer('total_students')->default(0);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
