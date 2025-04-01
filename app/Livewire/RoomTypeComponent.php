@@ -2,16 +2,17 @@
 
 namespace App\Livewire;
 
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\RoomType;
 
 class RoomTypeComponent extends Component
 {
-    public $roomTypes = [];
+    use WithPagination;
+
     public $search = '';
-    public $totalRoomTypes = 0;
-    public $lastPage = 1;
-    public $currentPage = 1;
     public $perPage = 10;
     
     // Form fields
@@ -24,21 +25,14 @@ class RoomTypeComponent extends Component
     public $showEditModal = false;
     public $showDeleteModal = false;
     public $editingRoomTypeId = null;
+    public $editingRoomType = null;
     public $deletingRoomTypeId = null;
 
-    public function mount()
+    #[Layout('layouts.app')]
+    public function render()
     {
-        $this->loadRoomTypes();
-    }
-
-    public function loadRoomTypes($page = null)
-    {
-        if ($page) {
-            $this->currentPage = $page;
-        }
-
         $query = RoomType::query()
-            ->orderBy('name');
+            ->orderBy('id', 'asc');
 
         if ($this->search) {
             $query->where(function($q) {
@@ -46,57 +40,17 @@ class RoomTypeComponent extends Component
             });
         }
 
-        // Calculate total rooms and pages
-        $this->totalRoomTypes = $query->count();
-        $this->lastPage = ceil($this->totalRoomTypes / $this->perPage);
-        
-        // Ensure current page is valid
-        if ($this->currentPage < 1) {
-            $this->currentPage = 1;
-        } else if ($this->currentPage > $this->lastPage) {
-            $this->currentPage = $this->lastPage ?: 1;
-        }
+        $roomTypes = $query->paginate($this->perPage);
 
-        // Manual pagination
-        $this->roomTypes = $query->skip(($this->currentPage - 1) * $this->perPage)
-                               ->take($this->perPage)
-                               ->get();
+        return view('livewire.room.types', [
+            'roomTypes' => $roomTypes
+        ]);
     }
 
-    public function nextPage()
-    {
-        if ($this->currentPage < $this->lastPage) {
-            $this->currentPage++;
-            $this->loadRoomTypes();
-        }
-    }
-
-    public function previousPage()
-    {
-        if ($this->currentPage > 1) {
-            $this->currentPage--;
-            $this->loadRoomTypes();
-        }
-    }
-
-    public function goToPage($page)
-    {
-        $this->loadRoomTypes($page);
-    }
-
+    #[On('search')]
     public function updatingSearch()
     {
-        $this->loadRoomTypes(1);
-    }
-
-    public function updatingCapacity()
-    {
-        $this->loadRoomTypes(1);
-    }
-
-    public function updatingMonthlyPrice()
-    {
-        $this->loadRoomTypes(1);
+        $this->resetPage();
     }
 
     // Modal handling methods
@@ -106,13 +60,13 @@ class RoomTypeComponent extends Component
         $this->showAddModal = true;
     }
 
-    public function openEditModal($id)
+    public function editRoomType($id)
     {
         $this->editingRoomTypeId = $id;
-        $roomType = RoomType::findOrFail($id);
-        $this->name = $roomType->name;
-        $this->monthly_price = $roomType->monthly_price;
-        $this->capacity = $roomType->capacity;
+        $this->editingRoomType = RoomType::findOrFail($id);
+        $this->name = $this->editingRoomType->name;
+        $this->monthly_price = $this->editingRoomType->monthly_price;
+        $this->capacity = $this->editingRoomType->capacity;
         $this->showEditModal = true;
     }
 
@@ -136,6 +90,7 @@ class RoomTypeComponent extends Component
         $this->monthly_price = null;
         $this->capacity = null;
         $this->editingRoomTypeId = null;
+        $this->editingRoomType = null;
         $this->deletingRoomTypeId = null;
         $this->resetValidation();
     }
@@ -143,85 +98,47 @@ class RoomTypeComponent extends Component
     // CRUD operations
     public function createRoomType()
     {
-        try {
-            $this->validate([
-                'name' => 'required|string|max:255|unique:room_types,name',
-                'monthly_price' => 'required|numeric|min:0',
-                'capacity' => 'required|integer|min:1'
-            ], [
-                'name.required' => 'Tên loại phòng là bắt buộc',
-                'name.unique' => 'Tên loại phòng đã tồn tại',
-                'monthly_price.required' => 'Giá thuê là bắt buộc',
-                'monthly_price.numeric' => 'Giá thuê phải là số',
-                'monthly_price.min' => 'Giá thuê không thể âm',
-                'capacity.required' => 'Sức chứa là bắt buộc',
-                'capacity.integer' => 'Sức chứa phải là số nguyên',
-                'capacity.min' => 'Sức chứa phải lớn hơn 0'
-            ]);
+        $validated = $this->validate([
+            'name' => 'required|string|max:255|unique:room_types,name',
+            'monthly_price' => 'required|numeric|min:0',
+            'capacity' => 'required|integer|min:1'
+        ]);
 
-            RoomType::create([
-                'name' => $this->name,
-                'monthly_price' => $this->monthly_price,
-                'capacity' => $this->capacity
-            ]);
+        RoomType::create($validated);
 
-            session()->flash('success', 'Loại phòng đã được tạo thành công');
-            $this->closeModal();
-            $this->loadRoomTypes(1);
-        } catch (\Exception $e) {
-            session()->flash('error', $e->getMessage());
-        }
+        $this->dispatch('success', 'Loại phòng đã được tạo thành công');
+        $this->closeModal();
+        $this->reset(['name', 'monthly_price', 'capacity']);
     }
 
     public function updateRoomType()
     {
-        try {
-            $this->validate([
-                'name' => 'required|string|max:255|unique:room_types,name,'.$this->editingRoomTypeId,
-                'monthly_price' => 'required|numeric|min:0',
-                'capacity' => 'required|integer|min:1'
-            ], [
-                'name.required' => 'Tên loại phòng là bắt buộc',
-                'name.unique' => 'Tên loại phòng đã tồn tại',
-                'monthly_price.required' => 'Giá thuê là bắt buộc',
-                'monthly_price.numeric' => 'Giá thuê phải là số',
-                'monthly_price.min' => 'Giá thuê không thể âm',
-                'capacity.required' => 'Sức chứa là bắt buộc',
-                'capacity.integer' => 'Sức chứa phải là số nguyên',
-                'capacity.min' => 'Sức chứa phải lớn hơn 0'
-            ]);
+        $validated = $this->validate([
+            'name' => 'required|string|max:255|unique:room_types,name,' . $this->editingRoomTypeId,
+            'monthly_price' => 'required|numeric|min:0',
+            'capacity' => 'required|integer|min:1'
+        ]);
 
-            $roomType = RoomType::findOrFail($this->editingRoomTypeId);
-            $roomType->update([
-                'name' => $this->name,
-                'monthly_price' => $this->monthly_price,
-                'capacity' => $this->capacity
-            ]);
+        $roomType = RoomType::findOrFail($this->editingRoomTypeId);
+        $roomType->update($validated);
 
-            session()->flash('success', 'Loại phòng đã được cập nhật thành công');
-            $this->closeModal();
-            $this->loadRoomTypes($this->currentPage);
-        } catch (\Exception $e) {
-            session()->flash('error', $e->getMessage());
-        }
+        $this->dispatch('success', 'Loại phòng đã được cập nhật thành công');
+        $this->closeModal();
+        $this->reset(['editingRoomTypeId', 'name', 'monthly_price', 'capacity']);
     }
 
     public function deleteRoomType()
     {
-        try {
-            $roomType = RoomType::findOrFail($this->deletingRoomTypeId);
-            $roomType->delete();
+        $roomType = RoomType::findOrFail($this->deletingRoomTypeId);
 
-            session()->flash('success', 'Loại phòng đã được xóa thành công');
-            $this->closeModal();
-            $this->loadRoomTypes($this->currentPage);
-        } catch (\Exception $e) {
-            session()->flash('error', $e->getMessage());
+        if ($roomType->rooms()->exists()) {
+            $this->dispatch('error', 'Không thể xóa loại phòng đang được sử dụng');
+            return;
         }
-    }
 
-    public function render()
-    {
-        return view('livewire.room.types');
+        $roomType->delete();
+        $this->dispatch('success', 'Loại phòng đã được xóa thành công');
+        $this->closeModal();
+        $this->resetPage();
     }
 }

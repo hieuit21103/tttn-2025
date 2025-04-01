@@ -76,37 +76,13 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center mt-4">
-                        <div>Hiển thị {{ ($currentPage - 1) * $perPage + 1 }}-{{ min($currentPage * $perPage, $totalRoomTypes) }} của {{ $totalRoomTypes }} mục</div>
-                        <nav>
-                            <ul class="pagination mb-0">
-                                @if($currentPage === 1)
-                                    <li class="page-item disabled">
-                                        <a class="page-link" href="javascript:void(0)">Trước</a>
-                                    </li>
-                                @else
-                                    <li class="page-item">
-                                        <a class="page-link" href="javascript:void(0)" wire:click="previousPage">Trước</a>
-                                    </li>
-                                @endif
-
-                                @for($i = 1; $i <= $lastPage; $i++)
-                                    <li class="page-item {{ $currentPage === $i ? 'active' : '' }}">
-                                        <a class="page-link" href="javascript:void(0)" wire:click="goToPage({{ $i }})">{{ $i }}</a>
-                                    </li>
-                                @endfor
-
-                                @if($currentPage === $lastPage)
-                                    <li class="page-item disabled">
-                                        <a class="page-link" href="javascript:void(0)">Sau</a>
-                                    </li>
-                                @else
-                                    <li class="page-item">
-                                        <a class="page-link" href="javascript:void(0)" wire:click="nextPage">Sau</a>
-                                    </li>
-                                @endif
-                            </ul>
-                        </nav>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>
+                            Hiển thị {{ $roomTypes->firstItem() }} đến {{ $roomTypes->lastItem() }} trong tổng số {{ $roomTypes->total() }} loại phòng
+                        </div>
+                        <div>
+                            {{ $roomTypes->links('pagination') }}
+                        </div>
                     </div>
                 </div>
             </div>
