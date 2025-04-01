@@ -6,15 +6,12 @@ use Livewire\Component;
 use App\Models\RoomType;
 use App\Models\Room;
 use App\Models\Student;
+use Livewire\WithPagination;
 
 class RoomList extends Component
 {
-    public $rooms = [];
-    public $roomTypes = [];
+    use WithPagination;
     public $search = '';
-    public $totalRooms = 0;
-    public $lastPage = 1;
-    public $currentPage = 1;
     public $perPage = 10;
     
     // Form fields
@@ -30,78 +27,42 @@ class RoomList extends Component
     public $editingRoomId = null;
     public $deletingRoomId = null;
 
-    public function mount()
-    {
-        $this->roomTypes = RoomType::all();
-        $this->loadRooms();
-    }
 
-    public function loadRooms($page = null)
-    {
-        if ($page) {
-            $this->currentPage = $page;
-        }
+    public function render(){
+        $roomTypes = RoomType::all();
 
         $query = Room::query()
             ->with('roomType')
             ->withCount('students')
-            ->orderBy('name');
+            ->orderBy('id', 'asc');
 
         if ($this->search) {
-            $query->where('name', 'like', "%{$this->search}%");
+            $query->where('name', 'like', "%{$this->search}%")
+                ->orWhere('roomType.name', 'like', "%{$this->search}%");
         }
 
-        // Calculate total rooms and pages
-        $this->totalRooms = $query->count();
-        $this->lastPage = ceil($this->totalRooms / $this->perPage);
-        
-        // Ensure current page is valid
-        if ($this->currentPage < 1) {
-            $this->currentPage = 1;
-        } else if ($this->currentPage > $this->lastPage) {
-            $this->currentPage = $this->lastPage ?: 1;
-        }
+        $rooms = $query->paginate($this->perPage);
 
-        // Manual pagination
-        $this->rooms = $query->skip(($this->currentPage - 1) * $this->perPage)
-                               ->take($this->perPage)
-                               ->get();
+        return view('livewire.room.list', [
+            'rooms' => $rooms,
+            'roomTypes' => $roomTypes
+        ]);
     }
 
-    public function nextPage()
-    {
-        if ($this->currentPage < $this->lastPage) {
-            $this->currentPage++;
-            $this->loadRooms();
-        }
-    }
-
-    public function previousPage()
-    {
-        if ($this->currentPage > 1) {
-            $this->currentPage--;
-            $this->loadRooms();
-        }
-    }
-
-    public function goToPage($page)
-    {
-        $this->loadRooms($page);
-    }
-
+    #[On('search')]
     public function updatingSearch()
     {
-        $this->loadRooms(1);
+        $this->resetPage();
     }
 
     public function updatingCapacity()
     {
-        $this->loadRooms(1);
+        $this->resetPage();
     }
 
     public function updatingMonthlyPrice()
     {
-        $this->loadRooms(1);
+        $this->resetPage();
     }
 
     public function handleRoomTypeChange($value)
@@ -115,7 +76,6 @@ class RoomList extends Component
         }
     }
 
-    // Modal handling methods
     public function openAddModal()
     {
         $this->resetRoomTypeForm();
@@ -235,17 +195,11 @@ class RoomList extends Component
         try {
             $roomType = RoomType::findOrFail($this->deletingRoomTypeId);
             $roomType->delete();
-
             session()->flash('success', 'Phòng đã được xóa thành công');
             $this->closeModal();
             $this->loadRoomTypes($this->currentPage);
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         }
-    }
-
-    public function render()
-    {
-        return view('livewire.room.list');
     }
 }

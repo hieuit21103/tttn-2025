@@ -28,7 +28,6 @@ class RoomTypeComponent extends Component
     public $editingRoomType = null;
     public $deletingRoomTypeId = null;
 
-    #[Layout('layouts.app')]
     public function render()
     {
         $query = RoomType::query()
