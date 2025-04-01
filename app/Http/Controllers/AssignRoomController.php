@@ -18,11 +18,9 @@ class AssignRoomController extends Controller
 
         DB::beginTransaction();
         try {
-            // Get the room and student
             $room = Room::findOrFail($request->room_id);
             $student = Student::findOrFail($request->student_id);
 
-            // Check if room is available
             if (!$room->isAvailable()) {
                 return response()->json([
                     'success' => false,
@@ -30,11 +28,9 @@ class AssignRoomController extends Controller
                 ], 422);
             }
 
-            // Assign the room
             $student->room_id = $request->room_id;
             $student->save();
 
-            // Update room occupancy
             $room->current_occupancy += 1;
             
             if ($room->current_occupancy >= $room->capacity) {
