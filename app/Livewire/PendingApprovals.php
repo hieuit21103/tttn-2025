@@ -10,23 +10,17 @@ use App\Mail\RegistrationApprovalNotification;
 use Illuminate\Support\Str;
 use App\Mail\RegistrationRejectionNotification;
 use App\Mail\DuplicateRegistrationNotification;
+use Livewire\WithPagination;
 
 class PendingApprovals extends Component
 {
+    use WithPagination;
     public $search = '';
-    public $registrations = [];
-    public $pagination = [];
-    public $currentPage = 1;
     public $showDetailsModal = false;
     public $selectedRegistration = null;
+    public $perPage = 10;
 
-    public function mount()
-    {
-        $this->loadRegistrations();
-    }
-
-    public function loadRegistrations($page = 1)
-    {
+    public function render(){
         $query = DormitoryRegistration::where('status', 'pending');
 
         if ($this->search) {
@@ -37,19 +31,11 @@ class PendingApprovals extends Component
             });
         }
 
-        $paginated = $query->paginate(10, ['*'], 'page', $page);
-        
-        // Store the data and pagination info separately
-        $this->registrations = $paginated->items();
-        $this->pagination = [
-            'current_page' => $paginated->currentPage(),
-            'last_page' => $paginated->lastPage(),
-            'total' => $paginated->total(),
-            'per_page' => $paginated->perPage(),
-            'from' => $paginated->firstItem(),
-            'to' => $paginated->lastItem()
-        ];
-        $this->currentPage = $page;
+        $paginated = $query->paginate($this->perPage);
+
+        return view('livewire.pending-approvals', [
+            'registrations' => $paginated
+        ]);
     }
 
     public function approve($id)
@@ -57,7 +43,6 @@ class PendingApprovals extends Component
         $registration = DormitoryRegistration::findOrFail($id);
         
         try {
-            // Check if student already exists in students table
             $existingStudent = Student::where('student_code', $registration->student_code)
                 ->orWhere('email', $registration->email)
                 ->first();
@@ -66,15 +51,13 @@ class PendingApprovals extends Component
                 $registration->status = 'rejected';
                 $registration->save();
 
-                // Send duplicate notification
                 Mail::to($registration->email)->send(new DuplicateRegistrationNotification($registration, $existingStudent));
 
                 session()->flash('error', 'Học sinh đã đăng ký trước đó. Email thông báo đã được gửi đến người dùng.');
-                $this->loadRegistrations($this->currentPage);
+                $this->resetPage();
                 return;
             }
 
-            // Check if there's another pending registration
             $existingPending = DormitoryRegistration::where('id', '!=', $id)
                 ->where(function($q) use ($registration) {
                     $q->where('student_code', $registration->student_code)
@@ -85,16 +68,13 @@ class PendingApprovals extends Component
 
             if ($existingPending) {
                 session()->flash('error', 'Đã có một hồ sơ đăng ký khác đang chờ duyệt với thông tin tương tự.');
-                $this->loadRegistrations($this->currentPage);
+                $this->resetPage();
                 return;
             }
 
-            // Generate activation token
             $registration->activation_token = Str::random(64);
             $registration->status = 'approved';
             $registration->save();
-
-            // Add to students table
             Student::create([
                 'student_code' => $registration->student_code,
                 'fullname' => $registration->fullname,
@@ -116,7 +96,7 @@ class PendingApprovals extends Component
                 
                 $activationUrl = route('activate', $registration->activation_token);
 
-                $this->loadRegistrations($this->currentPage);
+                $this->resetPage();
 
                 session()->flash('success', 'Đã duyệt hồ sơ thành công. Email thông báo đã được gửi đến người dùng.');
             } catch (\Exception $e) {
@@ -132,15 +112,9 @@ class PendingApprovals extends Component
             $registration->status = 'rejected';
             $registration->save();
 
-            // Send rejection notification
             Mail::to($registration->email)->send(new RegistrationRejectionNotification($registration));
 
-            // Reload data
-            if ($this->currentPage > 1 && DormitoryRegistration::where('status', 'pending')->where('id', '>', $id)->count() == 0) {
-                $this->loadRegistrations($this->currentPage - 1);
-            } else {
-                $this->loadRegistrations($this->currentPage);
-            }
+            $this->resetPage();
 
             session()->flash('success', 'Đã từ chối hồ sơ thành công. Email thông báo đã được gửi đến người dùng.');
         } catch (\Exception $e) {
@@ -160,13 +134,9 @@ class PendingApprovals extends Component
         $this->selectedRegistration = null;
     }
 
+    #[On('search')]
     public function updatingSearch()
     {
-        $this->loadRegistrations(1);
-    }
-
-    public function render()
-    {
-        return view('livewire.pending-approvals');
+        $this->resetPage();
     }
 }

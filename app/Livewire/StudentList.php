@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 use App\Models\Room;
 use App\Models\Student;
 use Illuminate\Support\Facades\Storage;
@@ -12,13 +13,9 @@ use Illuminate\Support\Facades\DB;
 class StudentList extends Component
 {
     use WithFileUploads;
+    use WithPagination;
 
-    public $rooms = [];
-    public $students = [];
     public $search = '';
-    public $totalStudents = 0;
-    public $lastPage = 1;
-    public $currentPage = 1;
     public $perPage = 10;
     public $availableRooms = [];
     
@@ -48,20 +45,12 @@ class StudentList extends Component
     public $selectedStudent = null;
     public $assigningStudentId = null;
 
-    public function mount()
+    public function render()
     {
-        $this->rooms = Room::all();
-        $this->availableRooms = Room::where('status', 'available')
+        $rooms = Room::all();
+        $availableRooms = Room::where('status', 'available')
             ->with('roomType')
             ->get();
-        $this->loadStudents();
-    }
-
-    public function loadStudents($page = null)
-    {
-        if ($page) {
-            $this->currentPage = $page;
-        }
 
         $query = Student::query()
             ->with('room')
@@ -71,57 +60,28 @@ class StudentList extends Component
             $query->where('name', 'like', "%{$this->search}%");
         }
 
-        // Calculate total rooms and pages
-        $this->totalStudents = $query->count();
-        $this->lastPage = ceil($this->totalStudents / $this->perPage);
-        
-        // Ensure current page is valid
-        if ($this->currentPage < 1) {
-            $this->currentPage = 1;
-        } else if ($this->currentPage > $this->lastPage) {
-            $this->currentPage = $this->lastPage ?: 1;
-        }
+        $students = $query->paginate($this->perPage);
 
-        // Manual pagination
-        $this->students = $query->skip(($this->currentPage - 1) * $this->perPage)
-                               ->take($this->perPage)
-                               ->get();
-    }
-
-    public function nextPage()
-    {
-        if ($this->currentPage < $this->lastPage) {
-            $this->currentPage++;
-            $this->loadStudents();
-        }
-    }
-
-    public function previousPage()
-    {
-        if ($this->currentPage > 1) {
-            $this->currentPage--;
-            $this->loadStudents();
-        }
-    }
-
-    public function goToPage($page)
-    {
-        $this->loadStudents($page);
+        return view('livewire.student.list', [
+            'rooms' => $rooms,
+            'availableRooms' => $availableRooms,
+            'students' => $students
+        ]);
     }
 
     public function updatingSearch()
     {
-        $this->loadStudents(1);
+        $this->resetPage();
     }
 
     public function updatingCapacity()
     {
-        $this->loadStudents(1);
+        $this->resetPage();
     }
 
     public function updatingMonthlyPrice()
     {
-        $this->loadStudents(1);
+        $this->resetPage();
     }
 
     public function handleRoomChange($value)
@@ -429,10 +389,5 @@ class StudentList extends Component
         $this->assigningStudentId = null;
         $this->room_id = null;
         $this->showAssignRoomModal = false;
-    }
-
-    public function render()
-    {
-        return view('livewire.student.list');
     }
 }

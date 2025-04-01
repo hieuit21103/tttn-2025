@@ -10,12 +10,7 @@
             <form class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Tìm kiếm</label>
-                    <input type="text" wire:model="search" class="form-control" placeholder="Tìm theo mã học sinh, tên hoặc lớp...">
-                </div>
-                <div class="col-md-2 d-flex align-items-end">
-                    <button type="button" class="btn btn-primary w-100" wire:click="loadRegistrations(1)">
-                        <i class="fas fa-search"></i> Tìm kiếm
-                    </button>
+                    <input type="text" wire:model.live="search" class="form-control" placeholder="Tìm theo mã học sinh, tên hoặc lớp...">
                 </div>
             </form>
         </div>
@@ -76,36 +71,12 @@
 
             <!-- Pagination -->
             <div class="d-flex justify-content-between align-items-center mt-4">
-                <div>Hiển thị {{ $pagination['from'] == "" ? 1 : $pagination['from'] }}-{{ $pagination['to'] == "" ? 0 : $pagination['to'] }} trong tổng số {{ $pagination['total'] }} hồ sơ</div>
-                <nav>
-                    <ul class="pagination mb-0">
-                        @if($pagination['current_page'] > 1)
-                            <li class="page-item">
-                                <a class="page-link" href="javascript:void(0)" wire:click="loadRegistrations({{ $pagination['current_page'] - 1 }})">Trước</a>
-                            </li>
-                        @else
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#">Trước</a>
-                            </li>
-                        @endif
-                        
-                        @for($i = 1; $i <= $pagination['last_page']; $i++)
-                            <li class="page-item {{ $pagination['current_page'] == $i ? 'active' : '' }}">
-                                <a class="page-link" href="javascript:void(0)" wire:click="loadRegistrations({{ $i }})">{{ $i }}</a>
-                            </li>
-                        @endfor
-                        
-                        @if($pagination['current_page'] < $pagination['last_page'])
-                            <li class="page-item">
-                                <a class="page-link" href="javascript:void(0)" wire:click="loadRegistrations({{ $pagination['current_page'] + 1 }})">Sau</a>
-                            </li>
-                        @else
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#">Sau</a>
-                            </li>
-                        @endif
-                    </ul>
-                </nav>
+                <div>
+                    Hiển thị {{ $registrations->firstItem() }}-{{ $registrations->lastItem() }} trong tổng số {{ $registrations->total() }} hồ sơ
+                </div>
+                <div>
+                    {{ $registrations->links('pagination') }}
+                </div>
             </div>
         </div>
     </div>

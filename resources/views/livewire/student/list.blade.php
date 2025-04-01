@@ -13,7 +13,7 @@
             <form class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Tìm kiếm</label>
-                    <input type="text" class="form-control" wire:model="search" placeholder="Tìm theo mã học sinh, tên hoặc lớp...">
+                    <input type="text" class="form-control" wire:model.live="search" placeholder="Tìm theo mã học sinh, tên hoặc lớp...">
                 </div>
             </form>
         </div>
@@ -84,36 +84,12 @@
 
             <!-- Pagination -->
             <div class="d-flex justify-content-between align-items-center mt-4">
-                <div>Hiển thị {{ ($currentPage - 1) * 10 + 1 }}-{{ min($currentPage * 10, $totalStudents) }} của {{ $totalStudents }} mục</div>
-                <nav>
-                    <ul class="pagination mb-0">
-                        @if($currentPage === 1)
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#">Trước</a>
-                            </li>
-                        @else
-                            <li class="page-item">
-                                <a class="page-link" href="#" wire:click="loadStudents({{ $currentPage - 1 }})">Trước</a>
-                            </li>
-                        @endif
-
-                        @for($i = 1; $i <= $lastPage; $i++)
-                            <li class="page-item {{ $currentPage === $i ? 'active' : '' }}">
-                                <a class="page-link" href="#" wire:click="loadStudents({{ $i }})">{{ $i }}</a>
-                            </li>
-                        @endfor
-
-                        @if($currentPage === $lastPage)
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#">Sau</a>
-                            </li>
-                        @else
-                            <li class="page-item">
-                                <a class="page-link" href="#" wire:click="loadStudents({{ $currentPage + 1 }})">Sau</a>
-                            </li>
-                        @endif
-                    </ul>
-                </nav>
+                <div>
+                    Hiển thị {{ $students->firstItem() }}-{{ $students->lastItem() }} trong tổng số {{ $students->total() }} học sinh
+                </div>
+                <div>
+                    {{ $students->links('pagination') }}
+                </div>
             </div>
         </div>
     </div>

@@ -8,17 +8,23 @@ use App\Models\Faculty;
 class FacultyList extends Component
 {
     public $search = '';
-    public $sortField = 'name';
-    public $sortDirection = 'asc';
+    public $perPage = 10;
 
-    public function sortBy($field)
+    public function render()
     {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortField = $field;
-            $this->sortDirection = 'asc';
+        $query = Faculty::query()
+            ->orderBy('id', 'asc');
+        
+        if($this->search) {
+            $query->where('name', 'like', "%{$this->search}%")
+                ->orWhere('code', 'like', "%{$this->search}%");
         }
+
+        $faculties = $query->paginate($this->perPage);
+
+        return view('livewire.faculty.list', [
+            'faculties' => $faculties
+        ]);
     }
 
     public function confirmDelete($id)
@@ -37,18 +43,5 @@ class FacultyList extends Component
         $this->dispatch('success', 'Khoa đã được xóa thành công!');
     }
 
-    public function render()
-    {
-        $faculties = Faculty::query()
-            ->when($this->search, function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('code', 'like', '%' . $this->search . '%');
-            })
-            ->orderBy($this->sortField, $this->sortDirection)
-            ->paginate(10);
-
-        return view('livewire.faculty.list', [
-            'faculties' => $faculties
-        ]);
-    }
+    
 }
