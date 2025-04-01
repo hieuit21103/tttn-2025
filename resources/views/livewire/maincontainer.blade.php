@@ -27,7 +27,7 @@
 
                                         <!-- Danh Sách Học Sinh -->
                                         <li class="nav-item">
-                                            <a href="#" wire:click.prevent="setActiveComponent('student.list')" class="nav-link {{ $activeComponent === 'student.list' ? 'active' : '' }} py-2">
+                                            <a href="#" wire:click.prevent="setActiveComponent('student-list')" class="nav-link {{ $activeComponent === 'student-list' ? 'active' : '' }} py-2">
                                                 <i class="fas fa-user-graduate me-1"></i>
                                                 <span class="d-inline-block">Danh Sách Học Sinh</span>
                                             </a>
@@ -42,13 +42,13 @@
                                             <div class="collapse {{ $activeMenu === 'room' ? 'show' : '' }}" id="roomMenu">
                                                 <ul class="nav flex-column ms-3">
                                                     <li class="nav-item">
-                                                        <a href="#" wire:click.prevent="setActiveComponent('room.types')" class="nav-link py-2 {{ $activeComponent === 'room.types' ? 'active' : '' }}">
+                                                        <a href="#" wire:click.prevent="setActiveComponent('room-types')" class="nav-link py-2 {{ $activeComponent === 'room-types' ? 'active' : '' }}">
                                                             <i class="fas fa-bed me-1"></i>
                                                             <span class="d-inline-block">Loại Phòng</span>
                                                         </a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a href="#" wire:click.prevent="setActiveComponent('room.list')" class="nav-link py-2 {{ $activeComponent === 'room.list' ? 'active' : '' }}">
+                                                        <a href="#" wire:click.prevent="setActiveComponent('room-list')" class="nav-link py-2 {{ $activeComponent === 'room-list' ? 'active' : '' }}">
                                                             <i class="fas fa-list me-1"></i>
                                                             <span class="d-inline-block">Danh Sách Phòng</span>
                                                         </a>
@@ -66,13 +66,13 @@
                                             <div class="collapse {{ $activeMenu === 'violation' ? 'show' : '' }}" id="violationMenu">
                                                 <ul class="nav flex-column ms-3">
                                                     <li class="nav-item">
-                                                        <a href="#" wire:click.prevent="setActiveComponent('violation.list')" class="nav-link py-2 {{ $activeComponent === 'violation.list' ? 'active' : '' }}">
+                                                        <a href="#" wire:click.prevent="setActiveComponent('violation-list')" class="nav-link py-2 {{ $activeComponent === 'violation-list' ? 'active' : '' }}">
                                                             <i class="fas fa-list me-1"></i>
                                                             <span class="d-inline-block">Danh Sách Vi Phạm</span>
                                                         </a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a href="#" wire:click.prevent="setActiveComponent('violation.level')" class="nav-link py-2 {{ $activeComponent === 'violation.level' ? 'active' : '' }}">
+                                                        <a href="#" wire:click.prevent="setActiveComponent('violation-level')" class="nav-link py-2 {{ $activeComponent === 'violation-level' ? 'active' : '' }}">
                                                             <i class="fas fa-shield-alt me-1"></i>
                                                             <span class="d-inline-block">Mức Vi Phạm</span>
                                                         </a>
@@ -90,7 +90,7 @@
                                             <div class="collapse {{ $activeMenu === 'faculty' ? 'show' : '' }}" id="facultyMenu">
                                                 <ul class="nav flex-column ms-3">
                                                     <li class="nav-item">
-                                                        <a href="#" wire:click.prevent="setActiveComponent('faculty.list')" class="nav-link py-2 {{ $activeComponent === 'faculty.list' ? 'active' : '' }}">
+                                                        <a href="#" wire:click.prevent="setActiveComponent('faculty-list')" class="nav-link py-2 {{ $activeComponent === 'faculty-list' ? 'active' : '' }}">
                                                             <i class="fas fa-building me-1"></i>
                                                             <span class="d-inline-block">Danh Sách Khoa</span>
                                                         </a>
@@ -114,13 +114,13 @@
                                             <div class="collapse {{ $activeMenu === 'service' ? 'show' : '' }}" id="serviceMenu">
                                                 <ul class="nav flex-column ms-3">
                                                     <li class="nav-item">
-                                                        <a href="#" wire:click.prevent="setActiveComponent('service.list')" class="nav-link py-2 {{ $activeComponent === 'service.list' ? 'active' : '' }}">
+                                                        <a href="#" wire:click.prevent="setActiveComponent('service-list')" class="nav-link py-2 {{ $activeComponent === 'service-list' ? 'active' : '' }}">
                                                             <i class="fas fa-list me-1"></i>
                                                             <span class="d-inline-block">Danh Sách Dịch vụ</span>
                                                         </a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a href="#" wire:click.prevent="setActiveComponent('service.room')" class="nav-link py-2 {{ $activeComponent === 'service.room' ? 'active' : '' }}">
+                                                        <a href="#" wire:click.prevent="setActiveComponent('service-room')" class="nav-link py-2 {{ $activeComponent === 'service-room' ? 'active' : '' }}">
                                                             <i class="fas fa-link me-1"></i>
                                                             <span class="d-inline-block">Dịch vụ Phòng</span>
                                                         </a>
@@ -138,13 +138,13 @@
                                             <div class="collapse {{ $activeMenu === 'invoice' ? 'show' : '' }}" id="invoiceMenu">
                                                 <ul class="nav flex-column ms-3">
                                                     <li class="nav-item">
-                                                        <a href="#" wire:click.prevent="setActiveComponent('invoice.list')" class="nav-link py-2 {{ $activeComponent === 'invoice.list' ? 'active' : '' }}">
+                                                        <a href="#" wire:click.prevent="setActiveComponent('invoice-list')" class="nav-link py-2 {{ $activeComponent === 'invoice-list' ? 'active' : '' }}">
                                                             <i class="fas fa-list me-1"></i>
                                                             <span class="d-inline-block">Danh Sách Hóa đơn</span>
                                                         </a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a href="#" wire:click.prevent="setActiveComponent('invoice.generate')" class="nav-link py-2 {{ $activeComponent === 'invoice.generate' ? 'active' : '' }}">
+                                                        <a href="#" wire:click.prevent="setActiveComponent('invoice-generate')" class="nav-link py-2 {{ $activeComponent === 'invoice-generate' ? 'active' : '' }}">
                                                             <i class="fas fa-plus me-1"></i>
                                                             <span class="d-inline-block">Tạo Hóa đơn</span>
                                                         </a>
@@ -180,35 +180,7 @@
             <div class="col-md-9 col-lg-10">
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
-                        @if($activeComponent === 'pending-approvals')
-                            @livewire('pending-approvals')
-                        @elseif($activeComponent === 'student.list')
-                            @livewire('student-list')
-                        @elseif($activeComponent === 'room.list')
-                            @livewire('room-list')
-                        @elseif($activeComponent === 'room.types')
-                            @livewire('room-type-component')
-                        @elseif($activeComponent === 'violation.list')
-                            @livewire('violation-list')
-                        @elseif($activeComponent === 'violation.level')
-                            @livewire('violation-level')
-                        @elseif($activeComponent === 'report')
-                            @livewire('report')
-                        @elseif($activeComponent === 'setting')
-                            @livewire('setting')
-                        @elseif($activeComponent === 'service.list')
-                            @livewire('service-list')
-                        @elseif($activeComponent === 'service.room')
-                            @livewire('service-room')
-                        @elseif($activeComponent === 'invoice.list')
-                            @livewire('invoice-list')
-                        @elseif($activeComponent === 'invoice.generate')
-                            @livewire('invoice-generate')
-                        @elseif($activeComponent === 'faculty.list')
-                            @livewire('faculty-list')
-                        @elseif($activeComponent === 'class.list')
-                            @livewire('class-list')
-                        @endif
+                        @livewire($activeComponent)
                     </div>
                 </div>
             </div>

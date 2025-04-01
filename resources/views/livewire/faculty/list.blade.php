@@ -19,18 +19,8 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th wire:click="sortBy('code')">
-                            Mã Khoa
-                            @if($sortField === 'code')
-                                <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }}"></i>
-                            @endif
-                        </th>
-                        <th wire:click="sortBy('name')">
-                            Tên Khoa
-                            @if($sortField === 'name')
-                                <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }}"></i>
-                            @endif
-                        </th>
+                        <th>Mã Khoa</th>
+                        <th>Tên Khoa</th>
                         <th>Trạng thái</th>
                         <th>Số lượng lớp</th>
                         <th>Số lượng sinh viên</th>
