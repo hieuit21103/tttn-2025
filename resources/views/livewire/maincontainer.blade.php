@@ -81,6 +81,30 @@
                                             </div>
                                         </li>
 
+                                        <!-- Quản lý Khoa và Lớp -->
+                                        <li class="nav-item">
+                                            <a href="#" class="nav-link py-2" wire:click.prevent="toggleMenu('faculty')">
+                                                <i class="fas fa-university me-1"></i>
+                                                <span class="d-inline-block">Quản lý Khoa và Lớp</span>
+                                            </a>
+                                            <div class="collapse {{ $activeMenu === 'faculty' ? 'show' : '' }}" id="facultyMenu">
+                                                <ul class="nav flex-column ms-3">
+                                                    <li class="nav-item">
+                                                        <a href="#" wire:click.prevent="setActiveComponent('faculty.list')" class="nav-link py-2 {{ $activeComponent === 'faculty.list' ? 'active' : '' }}">
+                                                            <i class="fas fa-building me-1"></i>
+                                                            <span class="d-inline-block">Danh Sách Khoa</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a href="#" wire:click.prevent="setActiveComponent('class.list')" class="nav-link py-2 {{ $activeComponent === 'class.list' ? 'active' : '' }}">
+                                                            <i class="fas fa-graduation-cap me-1"></i>
+                                                            <span class="d-inline-block">Danh Sách Lớp</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+
                                         <!-- Quản lý Dịch vụ -->
                                         <li class="nav-item">
                                             <a href="#" class="nav-link py-2" wire:click.prevent="toggleMenu('service')">
@@ -180,6 +204,10 @@
                             @livewire('invoice-list')
                         @elseif($activeComponent === 'invoice.generate')
                             @livewire('invoice-generate')
+                        @elseif($activeComponent === 'faculty.list')
+                            @livewire('faculty-list')
+                        @elseif($activeComponent === 'class.list')
+                            @livewire('class-list')
                         @endif
                     </div>
                 </div>
