@@ -51,6 +51,11 @@
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
+                                    <a href="{{ route('payment') }}" class="dropdown-item">
+                                        <i class="fas fa-credit-card me-2"></i>Thanh toán
+                                    </a>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
                                     <a class="dropdown-item" href="{{ route('logout') }}">
                                         <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                     </a>

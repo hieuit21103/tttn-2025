@@ -11,13 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('room_services', function (Blueprint $table) {
+        Schema::create('room_invoices', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
             $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');
-            $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
-            $table->decimal('price', 10, 2)->default(0);
-            $table->boolean('is_active')->default(true);
+            $table->decimal('amount', 10, 2);
+            $table->date('month');
+            $table->boolean('paid')->default(false);
+            $table->timestamp('paid_at')->nullable();
             $table->timestamps();
+
+            $table->unique(['student_id', 'month']);
         });
     }
 
@@ -26,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('room_services');
+        Schema::dropIfExists('room_invoices');
     }
 };
