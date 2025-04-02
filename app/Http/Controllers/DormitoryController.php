@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\DormitoryRegistrationNotification;
 use App\Models\DormitoryRegistration;
 use App\Models\ClassModel;
+use App\Models\Faculty;
 
 class DormitoryController extends Controller
 {
@@ -20,6 +21,7 @@ class DormitoryController extends Controller
             'gender' => 'required|in:Nam,Nữ',
             'birthdate' => 'required|date|before:today',
             'class' => 'required|string|max:50',
+            'faculty' => 'required|string|max:50',
             'id_number' => 'required|string|max:20|unique:dormitory_registrations',
             'id_front' => 'required|image|max:2048', // max 2MB
             'id_back' => 'required|image|max:2048',
@@ -41,7 +43,8 @@ class DormitoryController extends Controller
             'birthdate.before' => 'Ngày sinh không hợp lệ.',
             'truth_commitment.accepted' => 'Bạn phải đồng ý với cam kết.',
             'dormitory_rules.accepted' => 'Bạn phải đồng ý với quy định ký túc xá.',
-            'gender.in' => 'Giới tính phải là Nam hoặc Nữ.'
+            'gender.in' => 'Giới tính phải là Nam hoặc Nữ.',
+            'faculty.required' => 'Khoa là bắt buộc.'
         ]);
 
         if ($validator->fails()) {
@@ -65,6 +68,7 @@ class DormitoryController extends Controller
                 'gender' => $request->gender,
                 'birthdate' => $request->birthdate,
                 'class' => $request->class,
+                'faculty' => $request->faculty,
                 'id_number' => $request->id_number,
                 'personal_phone' => $request->personal_phone,
                 'family_phone' => $request->family_phone,
@@ -97,7 +101,18 @@ class DormitoryController extends Controller
 
     public function index()
     {
-        $classes = ClassModel::all();
-        return view('index', compact('classes'));
+        $faculties = Faculty::with('classes')->get();
+        return view('index', compact('faculties'));
+    }
+
+    public function getClassesByFaculty($facultyCode)
+    {
+        $faculty = Faculty::where('code', $facultyCode)->first();
+        if (!$faculty) {
+            return response()->json([], 404);
+        }
+        
+        $classes = ClassModel::where('faculty_id', $faculty->id)->get();
+        return response()->json($classes);
     }
 }

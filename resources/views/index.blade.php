@@ -273,25 +273,39 @@
                                         </div>
                                     </div>
                                 </div>
-                                
                                 <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Khoa</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                                            <select class="form-select @error('faculty') is-invalid @enderror" name="faculty" id="faculty" required>
+                                                <option value="">Chọn khoa</option>
+                                                @foreach($faculties as $faculty)
+                                                    <option value="{{ $faculty->code }}" {{ old('faculty') == $faculty->code ? 'selected' : '' }}>
+                                                        {{ $faculty->name }} ({{ $faculty->code }})
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('faculty')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Lớp</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
-                                            <select class="form-select @error('class') is-invalid @enderror" name="class" required>
+                                            <select class="form-select @error('class') is-invalid @enderror" name="class" id="class" required disabled>
                                                 <option value="">Chọn lớp</option>
-                                                @foreach($classes as $class)
-                                                    <option value="{{ $class->code }}" {{ old('class') == $class->code ? 'selected' : '' }}>
-                                                        {{ $class->name }} ({{ $class->code }})
-                                                    </option>
-                                                @endforeach
                                             </select>
                                             @error('class')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
+                                    </div>
+
+                                <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Số CMND/CCCD</label>
                                         <div class="input-group">
@@ -301,6 +315,17 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                            <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required>
+                                        </div>
+                                        <div class="form-text">Chúng tôi sẽ gửi thông tin về học phí và xác nhận đăng ký đến email này.</div>
+                                        @error('email')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                                 
@@ -315,7 +340,6 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    
                                     <div class="col-md-6">
                                         <label class="form-label">Số Điện Thoại Gia Đình</label>
                                         <div class="input-group">
@@ -328,20 +352,6 @@
                                     </div>
                                 </div>
                                 
-                                <div class="row mb-3">
-                                    <div class="col-12">
-                                        <label class="form-label">Email</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                            <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required>
-                                        </div>
-                                        <div class="form-text">Chúng tôi sẽ gửi thông tin về học phí và xác nhận đăng ký đến email này.</div>
-                                        @error('email')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
                                 <div class="row mb-3">
                                     <div class="col-12">
                                         <label class="form-label">Ảnh CCCD mặt trước</label>
@@ -579,13 +589,13 @@
             </div>
         </div>
     </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const truthCommitment = document.getElementById('truth_commitment');
             const dormitoryRules = document.getElementById('dormitory_rules');
             const registerBtn = document.getElementById('registerBtn');
+            const facultySelect = document.querySelector('select[name="faculty"]');
+            const classSelect = document.querySelector('select[name="class"]');
             const citis = document.getElementById("city");
             const districts = document.getElementById("district");
             const wards = document.getElementById("ward");
@@ -593,6 +603,40 @@
             function checkButtonStatus() {
                 const addressValid = citis.value && districts.value && wards.value;
                 registerBtn.disabled = !(truthCommitment.checked && dormitoryRules.checked && addressValid);
+            }
+
+            function loadClassesByFaculty(facultyCode) {
+                if (!facultyCode) {
+                    classSelect.length = 1;
+                    classSelect.disabled = true;
+                    return;
+                }
+
+                axios.get(`{{ route('classes.byFaculty') }}/${facultyCode}`)
+                    .then(function(response) {
+                        classSelect.length = 1;
+                        classSelect.disabled = false;
+                        response.data.forEach(function(classItem) {
+                            const option = new Option(`${classItem.name} (${classItem.code})`, classItem.code);
+                            classSelect.appendChild(option);
+                        });
+                    })
+                    .catch(function(error) {
+                        console.error('Error loading classes:', error.message);
+                        alert('Không thể tải danh sách lớp. Vui lòng thử lại sau.');
+                        classSelect.length = 1;
+                        classSelect.disabled = true;
+                    });
+            }
+
+            facultySelect.addEventListener('change', function() {
+                loadClassesByFaculty(this.value);
+                checkButtonStatus();
+            });
+
+            // Load classes based on the initially selected faculty
+            if (facultySelect.value) {
+                loadClassesByFaculty(facultySelect.value);
             }
 
             truthCommitment.addEventListener('change', checkButtonStatus);

@@ -96,7 +96,7 @@
                                                         </a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a href="#" wire:click.prevent="setActiveComponent('class.list')" class="nav-link py-2 {{ $activeComponent === 'class.list' ? 'active' : '' }}">
+                                                        <a href="#" wire:click.prevent="setActiveComponent('class-list')" class="nav-link py-2 {{ $activeComponent === 'class-list' ? 'active' : '' }}">
                                                             <i class="fas fa-graduation-cap me-1"></i>
                                                             <span class="d-inline-block">Danh Sách Lớp</span>
                                                         </a>
@@ -180,7 +180,38 @@
             <div class="col-md-9 col-lg-10">
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
-                        @livewire($activeComponent)
+                        @switch($activeComponent)
+                            @case('pending-approvals')
+                                @livewire('pending-approvals')
+                                @break
+                            @case('student-list')
+                                @livewire('student-list')
+                                @break
+                            @case('room-list')
+                                @livewire('room-list')
+                                @break
+                            @case('room-types')
+                                @livewire('room-type-component')
+                                @break
+                            @case('violation-list')
+                                @livewire('violation-list')
+                                @break
+                            @case('violation-types')
+                                @livewire('violation-types')
+                                @break
+                            @case('invoice-list')
+                                @livewire('invoice-list')
+                                @break
+                            @case('invoice-generate')
+                                @livewire('invoice-generate')
+                                @break
+                            @case('report')
+                                @livewire('report')
+                                @break
+                            @case('setting')
+                                @livewire('setting')
+                                @break
+                        @endswitch
                     </div>
                 </div>
             </div>

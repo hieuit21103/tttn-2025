@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('faculties', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique(); 
-            $table->string('name'); 
-            $table->string('short_name')->nullable();
+            $table->string('code')->unique();
+            $table->string('name');
+            $table->string('short_name');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

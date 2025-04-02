@@ -21,7 +21,7 @@ class PendingApprovals extends Component
     public $perPage = 10;
 
     public function render(){
-        $query = DormitoryRegistration::where('status', 'pending');
+        $query = DormitoryRegistration::query();
 
         if ($this->search) {
             $query->where(function($q) {
@@ -72,12 +72,18 @@ class PendingApprovals extends Component
                 return;
             }
 
+            // Generate activation token first
             $registration->activation_token = Str::random(64);
             $registration->status = 'approved';
             $registration->save();
+
+            // Send email with the correct activation token
+            Mail::to($registration->email)->send(new RegistrationApprovalNotification($registration));
+
             Student::create([
                 'student_code' => $registration->student_code,
                 'fullname' => $registration->fullname,
+                'faculty' => $registration->faculty,
                 'class' => $registration->class,
                 'birthdate' => $registration->birthdate,
                 'id_number' => $registration->id_number,
@@ -91,17 +97,15 @@ class PendingApprovals extends Component
                 'activated_at' => now()
             ]);
 
-                Mail::to($registration->email)->send(new RegistrationApprovalNotification($registration));
-                
-                
-                $activationUrl = route('activate', $registration->activation_token);
+            $activationUrl = route('activate', $registration->activation_token);
 
-                $this->resetPage();
+            $this->resetPage();
 
-                session()->flash('success', 'Đã duyệt hồ sơ thành công. Email thông báo đã được gửi đến người dùng.');
-            } catch (\Exception $e) {
-                session()->flash('error', 'Có lỗi xảy ra khi duyệt hồ sơ: ' . $e->getMessage());
-            }
+            session()->flash('success', 'Đã duyệt hồ sơ thành công. Email thông báo đã được gửi đến người dùng.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Có lỗi xảy ra khi duyệt hồ sơ: ' . $e->getMessage());
+            throw $e; // Re-throw the exception to handle it properly
+        }
     }
 
     public function reject($id)
@@ -119,6 +123,27 @@ class PendingApprovals extends Component
             session()->flash('success', 'Đã từ chối hồ sơ thành công. Email thông báo đã được gửi đến người dùng.');
         } catch (\Exception $e) {
             session()->flash('error', 'Có lỗi xảy ra khi từ chối hồ sơ. Vui lòng thử lại.');
+        }
+    }
+
+    public function revert($id)
+    {
+        $registration = DormitoryRegistration::findOrFail($id);
+        
+        try {
+            Student::where('student_code', $registration->student_code)->delete();
+            
+            $registration->status = 'pending';
+            
+            // Save both changes in a single operation
+            $registration->save();
+
+            $this->resetPage();
+
+            session()->flash('success', 'Đã hoàn tác trạng thái hồ sơ. Hồ sơ đã trở về trạng thái chờ duyệt, đã xóa thông tin sinh viên và đã tạo mới mã kích hoạt.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Có lỗi xảy ra khi hoàn tác trạng thái: ' . $e->getMessage());
+            throw $e;
         }
     }
 

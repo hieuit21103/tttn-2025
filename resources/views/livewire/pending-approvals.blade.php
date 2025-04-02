@@ -48,20 +48,34 @@
                             <td>{{ $registration->birthdate->format('d/m/Y') }}</td>
                             <td>{{ $registration->created_at->format('d/m/Y H:i') }}</td>
                             <td>
-                                <span class="badge bg-warning">
-                                    Chờ duyệt
+                                <span class="badge {{ $registration->status === 'pending' ? 'bg-warning' : ($registration->status === 'approved' ? 'bg-success' : ($registration->status === 'activated' ? 'bg-info' : 'bg-danger')) }}">
+                                    {{ 
+                                        match($registration->status) {
+                                            'pending' => 'Chờ duyệt',
+                                            'approved' => 'Đã duyệt',
+                                            'activated' => 'Đã kích hoạt',
+                                            'rejected' => 'Đã từ chối',
+                                            default => 'Chờ duyệt'
+                                        } 
+                                    }}
                                 </span>
                             </td>
                             <td>
-                                    <button class="btn btn-sm btn-primary" title="Xem chi tiết" wire:click="showDetails({{ $registration->id }})">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
+                                <button class="btn btn-sm btn-primary" title="Xem chi tiết" wire:click="showDetails({{ $registration->id }})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                @if($registration->status === 'pending')
                                     <button class="btn btn-sm btn-success" title="Duyệt" wire:click="approve({{ $registration->id }})" wire:loading.attr="disabled" wire:target="approve({{ $registration->id }})">
                                         <i class="fas fa-check"></i>
                                     </button>
                                     <button class="btn btn-sm btn-danger" title="Từ chối" wire:click="reject({{ $registration->id }})" wire:loading.attr="disabled" wire:target="reject({{ $registration->id }})">
                                         <i class="fas fa-times"></i>
                                     </button>
+                                @else
+                                    <button class="btn btn-sm btn-warning" title="Hoàn tác" wire:click="revert({{ $registration->id }})" wire:loading.attr="disabled" wire:target="revert({{ $registration->id }})">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
@@ -100,6 +114,14 @@
                             <div class="mb-3">
                                 <label class="form-label">Họ và Tên</label>
                                 <input type="text" class="form-control" value="{{ $selectedRegistration->fullname }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Giới tính</label>
+                                <input type="text" class="form-control" value="{{ $selectedRegistration->gender }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Khoa</label>
+                                <input type="text" class="form-control" value="{{ $selectedRegistration->faculty }}" readonly>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Lớp</label>

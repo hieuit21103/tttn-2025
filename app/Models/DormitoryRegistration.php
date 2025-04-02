@@ -14,6 +14,7 @@ class DormitoryRegistration extends Model
         'gender',
         'birthdate',
         'class',
+        'faculty',
         'id_number',
         'personal_phone',
         'family_phone',
