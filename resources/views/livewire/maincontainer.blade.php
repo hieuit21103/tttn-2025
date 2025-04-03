@@ -119,12 +119,6 @@
                                                             <span class="d-inline-block">Danh Sách Dịch vụ</span>
                                                         </a>
                                                     </li>
-                                                    <li class="nav-item">
-                                                        <a href="#" wire:click.prevent="setActiveComponent('service-room')" class="nav-link py-2 {{ $activeComponent === 'service-room' ? 'active' : '' }}">
-                                                            <i class="fas fa-link me-1"></i>
-                                                            <span class="d-inline-block">Dịch vụ Phòng</span>
-                                                        </a>
-                                                    </li>
                                                 </ul>
                                             </div>
                                         </li>
@@ -192,6 +186,9 @@
                                 @break
                             @case('room-types')
                                 @livewire('room-type-component')
+                                @break
+                            @case('service-list')
+                                @livewire('service-list')
                                 @break
                             @case('violation-list')
                                 @livewire('violation-list')

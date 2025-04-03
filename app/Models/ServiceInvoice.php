@@ -3,14 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Room;
+use App\Models\Service;
 
-class RoomService extends Model
+class ServiceInvoice extends Model
 {
     protected $fillable = [
         'room_id',
-        'service_id',
-        'price',
-        'is_active',
+        'amount',
+        'month',
+        'paid',
+        'paid_at',
     ];
 
     public function room()
