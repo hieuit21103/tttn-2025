@@ -15,6 +15,7 @@ return new class extends Migration
             $table->enum('gender', ['Nam', 'Nữ']);
             $table->date('birthdate');
             $table->string('class');
+            $table->string('faculty');
             $table->string('id_number')->unique();
             $table->string('personal_phone');
             $table->string('family_phone');

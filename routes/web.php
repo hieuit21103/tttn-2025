@@ -44,6 +44,12 @@ Route::post('/contact', function (Request $request) {
 
 Route::post('/dormitory/register', [DormitoryController::class, 'register'])->name('dormitory.register');
 
+Route::get('/payment', [PaymentController::class, 'index'])->name('payment');
+
+Route::get('/activate/{token}', [AccountActivationController::class, 'activate'])->name('activate');
+
+Route::get('/classes/{facultyCode?}', [DormitoryController::class, 'getClassesByFaculty'])->name('classes.byFaculty');
+
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home',function(){
         return view('dashboard');
@@ -53,5 +59,3 @@ Route::group(['middleware' => 'auth'], function () {
         return view('profile');
     })->name('profile');
 });
-
-Route::get('/activate/{token}', [AccountActivationController::class, 'activate'])->name('activate');

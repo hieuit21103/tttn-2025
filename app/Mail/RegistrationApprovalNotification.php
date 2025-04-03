@@ -26,6 +26,8 @@ class RegistrationApprovalNotification extends Mailable
                         'fullname' => $this->registration->fullname,
                         'student_code' => $this->registration->student_code,
                         'class' => $this->registration->class,
+                        'id_number' => $this->registration->id_number,
+                        'address' => $this->registration->address,
                         'activationUrl' => route('activate', $this->registration->activation_token)
                     ]);
     }

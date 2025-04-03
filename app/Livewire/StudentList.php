@@ -346,15 +346,10 @@ class StudentList extends Component
         }
     }
 
-    public function assignRoom()
+    public function assignRoom($roomId)
     {
-        if (!$this->room_id) {
-            $this->dispatch('error', 'Vui lòng chọn phòng!');
-            return;
-        }
-
         try {
-            $room = Room::findOrFail($this->room_id);
+            $room = Room::findOrFail($roomId);
             $student = Student::findOrFail($this->assigningStudentId);
 
             if (!$room->isAvailable()) {
@@ -364,7 +359,7 @@ class StudentList extends Component
 
             DB::beginTransaction();
             
-            $student->room_id = $this->room_id;
+            $student->room_id = $roomId;
             $student->save();
 
             $room->current_occupancy += 1;
@@ -387,7 +382,6 @@ class StudentList extends Component
     public function closeAssignRoomModal()
     {
         $this->assigningStudentId = null;
-        $this->room_id = null;
         $this->showAssignRoomModal = false;
     }
 }

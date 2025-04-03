@@ -149,7 +149,7 @@ class RoomList extends Component
 
             session()->flash('success', 'Phòng đã được tạo thành công');
             $this->closeModal();
-            $this->loadRooms(1);
+            $this->resetPage();
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         }

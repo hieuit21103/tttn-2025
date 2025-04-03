@@ -12,5 +12,6 @@
 <body class="bg-light">
 @yield('content')
 @livewireScripts
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.8.4/axios.min.js"></script>
 </body>
 </html>

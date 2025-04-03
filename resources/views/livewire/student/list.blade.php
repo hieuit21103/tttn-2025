@@ -29,6 +29,7 @@
                             <th>Mã học sinh</th>
                             <th>Họ và tên</th>
                             <th>Giới tính</th>
+                            <th>Khoa</th>
                             <th>Lớp</th>
                             <th>Phòng</th>
                             <th>Ngày sinh</th>
@@ -43,6 +44,7 @@
                             <td>{{ $student->student_code }}</td>
                             <td>{{ $student->fullname }}</td>
                             <td>{{ $student->getGenderLabel() }}</td>
+                            <td>{{ $student->faculty }}</td>
                             <td>{{ $student->class }}</td>
                             <td>
                                 @if($student->room)
@@ -302,37 +304,56 @@
 
     <!-- Assign Room Modal -->
     @if($showAssignRoomModal)
-        <div class="modal fade" wire:ignore.self tabindex="-1" role="dialog" aria-labelledby="assignRoomModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+        <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1" role="dialog" aria-labelledby="assignRoomModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="assignRoomModalLabel">Xếp phòng</h5>
+                        <h5 class="modal-title" id="assignRoomModalLabel">Danh sách phòng trống</h5>
                         <button type="button" class="close" wire:click="closeAssignRoomModal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label for="room_id">Chọn phòng</label>
-                            <select class="form-control" wire:model="room_id">
-                                <option value="">-- Chọn phòng --</option>
-                                @foreach($availableRooms as $room)
-                                    <option value="{{ $room->id }}" data-status="{{ $room->status }}" data-occupancy="{{ $room->current_occupancy }}" data-capacity="{{ $room->capacity }}">
-                                        {{ $room->name }} - {{ $room->roomType->name }}
-                                        <span class="badge bg-{{ $room->status === 'available' ? 'success' : 'warning' }}">
-                                            {{ $room->status === 'available' ? 'Còn trống' : 'Đang chờ' }}
-                                        </span>
-                                        <small class="text-muted">
-                                            {{ $room->current_occupancy }}/{{ $room->capacity }}
-                                        </small>
-                                    </option>
-                                @endforeach
-                            </select>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Mã phòng</th>
+                                        <th>Tên phòng</th>
+                                        <th>Loại phòng</th>
+                                        <th>Trạng thái</th>
+                                        <th>Số người hiện tại</th>
+                                        <th>Sức chứa</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($availableRooms as $room)
+                                    <tr>
+                                        <td>{{ $room->id }}</td>
+                                        <td>{{ $room->name }}</td>
+                                        <td>{{ $room->roomType->name }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ $room->status === 'available' ? 'success' : 'warning' }}">
+                                                {{ $room->status === 'available' ? 'Còn trống' : 'Đang chờ' }}
+                                            </span>
+                                        </td>
+                                        <td>{{ $room->current_occupancy }}</td>
+                                        <td>{{ $room->capacity }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary" wire:click="assignRoom({{ $room->id }})" wire:loading.attr="disabled" wire:target="assignRoom({{ $room->id }})">
+                                                <i class="fas fa-check me-1"></i>
+                                                Xếp phòng
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" wire:click="closeAssignRoomModal">Đóng</button>
-                        <button type="button" class="btn btn-primary" wire:click="assignRoom">Xác nhận</button>
                     </div>
                 </div>
             </div>
