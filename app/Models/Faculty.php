@@ -4,15 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ClassModel;
+use App\Models\Student;
 
 class Faculty extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'code',
         'name',
-        'short_name',
         'is_active'
     ];
 
@@ -22,26 +22,11 @@ class Faculty extends Model
 
     public function classes()
     {
-        return $this->hasMany(ClassModel::class);
+        return $this->hasMany(ClassModel::class, 'faculty_id', 'id');
     }
 
     public function students()
     {
-        return $this->hasManyThrough(Student::class, ClassModel::class);
-    }
-
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
-    }
-
-    public function scopeByCode($query, $code)
-    {
-        return $query->where('code', $code);
-    }
-
-    public function scopeByName($query, $name)
-    {
-        return $query->where('name', 'like', '%' . $name . '%');
+        return $this->hasMany(Student::class, 'faculty_id', 'id');
     }
 }

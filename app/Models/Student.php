@@ -14,8 +14,8 @@ class Student extends Model
         'student_code',
         'fullname',
         'gender',
-        'faculty',
-        'class',
+        'faculty_id',
+        'class_id',
         'birthdate',
         'id_number',
         'personal_phone',
@@ -54,5 +54,15 @@ class Student extends Model
     public function hasRoom()
     {
         return !is_null($this->room_id);
+    }
+
+    public function class()
+    {
+        return $this->belongsTo(ClassModel::class,'class_id','id');
+    }
+
+    public function faculty()
+    {
+        return $this->belongsTo(Faculty::class,'faculty_id','id');
     }
 }

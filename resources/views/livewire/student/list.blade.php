@@ -44,8 +44,8 @@
                             <td>{{ $student->student_code }}</td>
                             <td>{{ $student->fullname }}</td>
                             <td>{{ $student->getGenderLabel() }}</td>
-                            <td>{{ $student->faculty }}</td>
-                            <td>{{ $student->class }}</td>
+                            <td>{{ $student->faculty->name }}</td>
+                            <td>{{ $student->class->name }}</td>
                             <td>
                                 @if($student->room)
                                     <span class="badge bg-success">

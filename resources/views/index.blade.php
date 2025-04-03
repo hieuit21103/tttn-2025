@@ -283,11 +283,11 @@
                                         <label class="form-label">Khoa</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
-                                            <select class="form-select @error('faculty') is-invalid @enderror" name="faculty" id="faculty" required>
+                                            <select class="form-select @error('faculty') is-invalid @enderror" name="faculty_id" id="faculty" required>
                                                 <option value="">Chọn khoa</option>
                                                 @foreach($faculties as $faculty)
-                                                    <option value="{{ $faculty->code }}" {{ old('faculty') == $faculty->code ? 'selected' : '' }}>
-                                                        {{ $faculty->name }} ({{ $faculty->code }})
+                                                    <option value="{{ $faculty->id }}" {{ old('faculty') == $faculty->id ? 'selected' : '' }}>
+                                                        {{ $faculty->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -300,7 +300,7 @@
                                         <label class="form-label">Lớp</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
-                                            <select class="form-select @error('class') is-invalid @enderror" name="class" id="class" required disabled>
+                                            <select class="form-select @error('class') is-invalid @enderror" name="class_id" id="class" required disabled>
                                                 <option value="">Chọn lớp</option>
                                             </select>
                                             @error('class')
@@ -599,8 +599,8 @@
             const truthCommitment = document.getElementById('truth_commitment');
             const dormitoryRules = document.getElementById('dormitory_rules');
             const registerBtn = document.getElementById('registerBtn');
-            const facultySelect = document.querySelector('select[name="faculty"]');
-            const classSelect = document.querySelector('select[name="class"]');
+            const facultySelect = document.querySelector('select[name="faculty_id"]');
+            const classSelect = document.querySelector('select[name="class_id"]');
             const citis = document.getElementById("city");
             const districts = document.getElementById("district");
             const wards = document.getElementById("ward");
@@ -622,7 +622,7 @@
                         classSelect.length = 1;
                         classSelect.disabled = false;
                         response.data.forEach(function(classItem) {
-                            const option = new Option(`${classItem.name} (${classItem.code})`, classItem.code);
+                            const option = new Option(`${classItem.name}`, classItem.id);
                             classSelect.appendChild(option);
                         });
                     })

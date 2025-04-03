@@ -10,6 +10,7 @@ use App\Mail\DormitoryRegistrationNotification;
 use App\Models\DormitoryRegistration;
 use App\Models\ClassModel;
 use App\Models\Faculty;
+use App\Models\Student;
 
 class DormitoryController extends Controller
 {
@@ -20,8 +21,8 @@ class DormitoryController extends Controller
             'fullname' => 'required|string|max:255',
             'gender' => 'required|in:Nam,Nữ',
             'birthdate' => 'required|date|before:today',
-            'class' => 'required|string|max:50',
-            'faculty' => 'required|string|max:50',
+            'class_id' => 'required|string|max:50',
+            'faculty_id' => 'required|string|max:50',
             'id_number' => 'required|string|max:20|unique:dormitory_registrations',
             'id_front' => 'required|image|max:2048', // max 2MB
             'id_back' => 'required|image|max:2048',
@@ -67,8 +68,8 @@ class DormitoryController extends Controller
                 'fullname' => $request->fullname,
                 'gender' => $request->gender,
                 'birthdate' => $request->birthdate,
-                'class' => $request->class,
-                'faculty' => $request->faculty,
+                'class_id' => $request->class_id,
+                'faculty_id' => $request->faculty_id,
                 'id_number' => $request->id_number,
                 'personal_phone' => $request->personal_phone,
                 'family_phone' => $request->family_phone,
@@ -107,7 +108,7 @@ class DormitoryController extends Controller
 
     public function getClassesByFaculty($facultyCode)
     {
-        $faculty = Faculty::where('code', $facultyCode)->first();
+        $faculty = Faculty::where('id', $facultyCode)->first();
         if (!$faculty) {
             return response()->json([], 404);
         }

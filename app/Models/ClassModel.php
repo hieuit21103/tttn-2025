@@ -15,7 +15,6 @@ class ClassModel extends Model
 
     protected $fillable = [
         'faculty_id',
-        'code',
         'name',
         'total_students',
         'is_active'
@@ -28,36 +27,11 @@ class ClassModel extends Model
 
     public function faculty()
     {
-        return $this->belongsTo(Faculty::class);
+        return $this->belongsTo(Faculty::class, 'faculty_id', 'id');
     }
 
     public function students()
     {
-        return $this->belongsToMany(Student::class, 'student_classes');
-    }
-
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
-    }
-
-    public function scopeByCode($query, $code)
-    {
-        return $query->where('code', $code);
-    }
-
-    public function scopeByName($query, $name)
-    {
-        return $query->where('name', 'like', '%' . $name . '%');
-    }
-
-    public function scopeByFaculty($query, $facultyId)
-    {
-        return $query->where('faculty_id', $facultyId);
-    }
-
-    public function scopeWithStudentCount($query)
-    {
-        return $query->withCount('students');
+        return $this->hasMany(Student::class, 'class_id', 'id');
     }
 }

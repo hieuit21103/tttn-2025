@@ -26,8 +26,8 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Mã dịch vụ</th>
-                            <th>Tên dịch vụ</th>
+                            <th>Mã vi phạm</th>
+                            <th>Tên vi phạm</th>
                             <th>Đơn vị</th>
                             <th>Giá</th>
                             <th>Loại dịch vụ</th>

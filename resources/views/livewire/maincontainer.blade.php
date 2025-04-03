@@ -187,6 +187,12 @@
                             @case('room-types')
                                 @livewire('room-type-component')
                                 @break
+                            @case('faculty-list')
+                                @livewire('faculty-list')
+                                @break
+                            @case('class-list')
+                                @livewire('class-list')
+                                @break
                             @case('service-list')
                                 @livewire('service-list')
                                 @break

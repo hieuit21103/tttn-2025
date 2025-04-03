@@ -13,8 +13,8 @@ class DormitoryRegistration extends Model
         'fullname',
         'gender',
         'birthdate',
-        'class',
-        'faculty',
+        'class_id',
+        'faculty_id',
         'id_number',
         'personal_phone',
         'family_phone',
@@ -34,4 +34,14 @@ class DormitoryRegistration extends Model
     protected $attributes = [
         'status' => 'pending'
     ];
+
+    public function class()
+    {
+        return $this->belongsTo(ClassModel::class, 'class_id', 'id');
+    }
+
+    public function faculty()
+    {
+        return $this->belongsTo(Faculty::class, 'faculty_id', 'id');
+    }
 }

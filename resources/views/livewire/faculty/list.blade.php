@@ -2,7 +2,7 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Danh Sách Khoa</h5>
         <div>
-            <a href="#" wire:click="setActiveComponent('faculty.create')" class="btn btn-primary">
+            <a href="#" wire:click="openAddModal" class="btn btn-primary">
                 <i class="fas fa-plus me-1"></i>
                 Thêm Khoa Mới
             </a>
@@ -19,7 +19,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Mã Khoa</th>
+                        <th>ID</th>
                         <th>Tên Khoa</th>
                         <th>Trạng thái</th>
                         <th>Số lượng lớp</th>
@@ -30,7 +30,7 @@
                 <tbody>
                     @foreach($faculties as $faculty)
                         <tr>
-                            <td>{{ $faculty->code }}</td>
+                            <td>{{ $faculty->id }}</td>
                             <td>{{ $faculty->name }}</td>
                             <td>
                                 <span class="badge bg-{{ $faculty->is_active ? 'success' : 'danger' }}">
@@ -40,14 +40,12 @@
                             <td>{{ $faculty->classes()->count() }}</td>
                             <td>{{ $faculty->students()->count() }}</td>
                             <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-sm btn-info" wire:click="setActiveComponent('faculty.edit', {{ $faculty->id }})">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" wire:click="confirmDelete({{ $faculty->id }})">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
+                                <button class="btn btn-sm btn-info" wire:click="openEditModal({{ $faculty->id }})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" wire:click="openDeleteModal({{ $faculty->id }})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                     @endforeach
@@ -63,5 +61,54 @@
                 {{ $faculties->links() }}
             </div>
         </div>
-    </div>
+
+        <!-- Add Faculty Modal -->
+        @if($showAddModal || $showEditModal)
+        <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">@if($showEditModal) Sửa Khoa @else Thêm Khoa @endif</h5>
+                        <button type="button" class="btn-close" wire:click="closeModal"></button>
+                    </div>
+                    <form wire:submit.prevent="@if($editingFacultyId) updateFaculty @else createFaculty @endif">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Tên Khoa</label>
+                                        <input type="text" class="form-control" wire:model="name" required>
+                                        @error('name') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" wire:click="closeModal">Đóng</button>
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+        @if($showDeleteModal)
+        <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa</h5>
+                        <button type="button" class="btn-close" wire:click="closeModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có chắc muốn xóa khoa này không?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" wire:click="closeModal">Hủy</button>
+                        <button type="button" class="btn btn-danger" wire:click="deleteService">Xóa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
 </div>

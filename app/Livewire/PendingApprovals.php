@@ -83,8 +83,8 @@ class PendingApprovals extends Component
             Student::create([
                 'student_code' => $registration->student_code,
                 'fullname' => $registration->fullname,
-                'faculty' => $registration->faculty,
-                'class' => $registration->class,
+                'faculty_id' => $registration->faculty_id,
+                'class_id' => $registration->class_id,
                 'birthdate' => $registration->birthdate,
                 'id_number' => $registration->id_number,
                 'personal_phone' => $registration->personal_phone,

@@ -32,6 +32,7 @@
                         <tr>
                             <th>Mã Học Sinh</th>
                             <th>Họ và Tên</th>
+                            <th>Khoa</th>
                             <th>Lớp</th>
                             <th>Ngày Sinh</th>
                             <th>Ngày Đăng Ký</th>
@@ -44,7 +45,8 @@
                         <tr>
                             <td>{{ $registration->student_code }}</td>
                             <td>{{ $registration->fullname }}</td>
-                            <td>{{ $registration->class }}</td>
+                            <td>{{ $registration->faculty->name }}</td>
+                            <td>{{ $registration->class->name }}</td>
                             <td>{{ $registration->birthdate->format('d/m/Y') }}</td>
                             <td>{{ $registration->created_at->format('d/m/Y H:i') }}</td>
                             <td>
@@ -121,11 +123,11 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Khoa</label>
-                                <input type="text" class="form-control" value="{{ $selectedRegistration->faculty }}" readonly>
+                                <input type="text" class="form-control" value="{{ $selectedRegistration->faculty->name }}" readonly>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Lớp</label>
-                                <input type="text" class="form-control" value="{{ $selectedRegistration->class }}" readonly>
+                                <input type="text" class="form-control" value="{{ $selectedRegistration->class->name }}" readonly>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Ngày Sinh</label>
