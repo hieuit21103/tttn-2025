@@ -7,6 +7,8 @@ use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use App\Models\Room;
 use App\Models\Student;
+use App\Models\Faculty;
+use App\Models\ClassModel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
@@ -23,7 +25,8 @@ class StudentList extends Component
     public $student_code = '';
     public $fullname = '';
     public $gender = '';
-    public $class = '';
+    public $faculty_id = '';
+    public $class_id = '';
     public $birthdate = '';
     public $id_number = '';
     public $personal_phone = '';
@@ -45,8 +48,11 @@ class StudentList extends Component
     public $selectedStudent = null;
     public $assigningStudentId = null;
 
+    public $classes = [];
+
     public function render()
     {
+        $faculties = Faculty::all();
         $rooms = Room::all();
         $availableRooms = Room::where('status', 'available')
             ->with('roomType')
@@ -57,7 +63,7 @@ class StudentList extends Component
             ->orderBy('fullname');
 
         if ($this->search) {
-            $query->where('name', 'like', "%{$this->search}%");
+            $query->where('fullname', 'like', "%{$this->search}%");
         }
 
         $students = $query->paginate($this->perPage);
@@ -65,9 +71,12 @@ class StudentList extends Component
         return view('livewire.student.list', [
             'rooms' => $rooms,
             'availableRooms' => $availableRooms,
-            'students' => $students
+            'students' => $students,
+            'faculties' => $faculties
         ]);
     }
+
+
 
     public function updatingSearch()
     {
@@ -84,6 +93,27 @@ class StudentList extends Component
         $this->resetPage();
     }
 
+
+    public function updatingFacultyId()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingClassId()
+    {
+        $this->resetPage();
+    }
+
+    public function handleFacultyChange($value)
+    {
+        if ($value) {
+            $class = ClassModel::find($value);
+            if($class){
+                $this->classes = [$class];
+            }
+        }
+    }
+    
     public function handleRoomChange($value)
     {
         if ($value) {
@@ -109,7 +139,8 @@ class StudentList extends Component
         $this->student_code = $student->student_code;
         $this->fullname = $student->fullname;
         $this->gender = $student->gender;
-        $this->class = $student->class;
+        $this->faculty_id = $student->faculty_id;
+        $this->class_id = $student->class_id;
         $this->birthdate = $student->birthdate;
         $this->id_number = $student->id_number;
         $this->personal_phone = $student->personal_phone;
@@ -162,7 +193,8 @@ class StudentList extends Component
         $this->student_code = '';
         $this->fullname = '';
         $this->gender = '';
-        $this->class = '';
+        $this->class_id = '';
+        $this->faculty_id = '';
         $this->id_number = '';
         $this->personal_phone = '';
         $this->family_phone = '';
@@ -184,7 +216,8 @@ class StudentList extends Component
                 'student_code' => 'required|string|max:255|unique:students,student_code',
                 'fullname' => 'required|string|max:255',
                 'gender' => 'required|string|in:Nam,Nữ',
-                'class' => 'required|string|max:255',
+                'class_id' => 'required|string|max:255',
+                'faculty_id' => 'required|string|max:255',
                 'birthdate' => 'required|date',
                 'id_number' => 'required|string|max:255|unique:students,id_number',
                 'personal_phone' => 'required|string|max:10',
@@ -200,7 +233,8 @@ class StudentList extends Component
                 'fullname.required' => 'Họ và tên là bắt buộc',
                 'gender.required' => 'Giới tính là bắt buộc',
                 'gender.in' => 'Giới tính phải là Nam hoặc Nữ',
-                'class.required' => 'Lớp là bắt buộc',
+                'class_id.required' => 'Lớp là bắt buộc',
+                'faculty_id.required' => 'Khoa là bắt buộc',
                 'birthdate.required' => 'Ngày sinh là bắt buộc',
                 'id_number.required' => 'Số CMND/CCCD là bắt buộc',
                 'id_number.unique' => 'Số CMND/CCCD đã tồn tại',
@@ -232,7 +266,8 @@ class StudentList extends Component
                 'student_code' => $this->student_code,
                 'fullname' => $this->fullname,
                 'gender' => $this->gender,
-                'class' => $this->class,
+                'class_id' => $this->class_id,
+                'faculty_id' => $this->faculty_id,
                 'birthdate' => $this->birthdate,
                 'id_number' => $this->id_number,
                 'personal_phone' => $this->personal_phone,
@@ -246,7 +281,7 @@ class StudentList extends Component
 
             session()->flash('success', 'Học sinh đã được tạo thành công');
             $this->closeModal();
-            $this->loadStudents(1);
+            $this->resetPage();
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         }
@@ -259,7 +294,8 @@ class StudentList extends Component
                 'student_code' => 'required|string|max:255|unique:students,student_code,'.$this->editingStudentId,
                 'fullname' => 'required|string|max:255',
                 'gender' => 'required|string|in:Nam,Nữ',
-                'class' => 'required|string|max:255',
+                'class_id' => 'required|string|max:255',
+                'faculty_id' => 'required|string|max:255',
                 'birthdate' => 'required|date',
                 'id_number' => 'required|string|max:255|unique:students,id_number,'.$this->editingStudentId,
                 'personal_phone' => 'required|string|max:10',
@@ -275,7 +311,8 @@ class StudentList extends Component
                 'fullname.required' => 'Họ và tên là bắt buộc',
                 'gender.required' => 'Giới tính là bắt buộc',
                 'gender.in' => 'Giới tính phải là Nam hoặc Nữ',
-                'class.required' => 'Lớp là bắt buộc',
+                'class_id.required' => 'Lớp là bắt buộc',
+                'faculty_id.required' => 'Khoa là bắt buộc',
                 'birthdate.required' => 'Ngày sinh là bắt buộc',
                 'id_number.required' => 'Số CMND/CCCD là bắt buộc',
                 'id_number.unique' => 'Số CMND/CCCD đã tồn tại',
@@ -314,7 +351,8 @@ class StudentList extends Component
                 'student_code' => $this->student_code,
                 'fullname' => $this->fullname,
                 'gender' => $this->gender,
-                'class' => $this->class,
+                'class_id' => $this->class_id,
+                'faculty_id' => $this->faculty_id,
                 'birthdate' => $this->birthdate,
                 'id_number' => $this->id_number,
                 'personal_phone' => $this->personal_phone,
@@ -326,7 +364,7 @@ class StudentList extends Component
 
             session()->flash('success', 'Học sinh đã được cập nhật thành công');
             $this->closeModal();
-            $this->loadStudents($this->currentPage);
+            $this->resetPage();
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         }
@@ -340,7 +378,7 @@ class StudentList extends Component
 
             session()->flash('success', 'Học sinh đã được xóa thành công');
             $this->closeModal();
-            $this->loadStudents($this->currentPage);
+            $this->resetPage();
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         }
@@ -353,7 +391,7 @@ class StudentList extends Component
             $student = Student::findOrFail($this->assigningStudentId);
 
             if (!$room->isAvailable()) {
-                $this->dispatch('error', 'Phòng đã đầy hoặc không còn trống!');
+                $session()->flash('error', 'Phòng đã đầy hoặc không còn trống!');
                 return;
             }
 
@@ -370,12 +408,12 @@ class StudentList extends Component
 
             DB::commit();
 
-            $this->dispatch('success', 'Đã xếp phòng thành công!');
+            $session()->flash('success', 'Đã xếp phòng thành công!');
             $this->closeAssignRoomModal();
-            $this->loadStudents();
+            $this->resetPage();
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->dispatch('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+            $session()->flash('error', 'Có lỗi xảy ra: ' . $e->getMessage());
         }
     }
 

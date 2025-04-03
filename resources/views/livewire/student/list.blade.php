@@ -129,9 +129,24 @@
                                     @error('gender') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="mb-3">
+                                    <label class="form-label">Khoa</label>
+                                    <select class="form-select" wire:model="faculty_id">
+                                    <option value="">Chọn khoa</option>
+                                    @foreach($faculties as $faculty)
+                                        <option value="{{ $faculty->id }}">{{ $faculty->name }}</option>
+                                    @endforeach          
+                                    </select>
+                                    @error('faculty_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Lớp</label>
-                                    <input type="text" class="form-control" wire:model="class" required>
-                                    @error('class') <span class="text-danger">{{ $message }}</span> @enderror
+                                    <select class="form-select" wire:model="class_id">
+                                        <option value="">Chọn lớp</option>
+                                        @foreach($classes as $class)
+                                            <option value="{{ $class->id }}">{{ $class->name }}</option>
+                                        @endforeach          
+                                    </select>
+                                    @error('class_id') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Ngày sinh</label>

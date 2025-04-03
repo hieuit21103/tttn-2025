@@ -97,17 +97,22 @@ class RoomTypeComponent extends Component
     // CRUD operations
     public function createRoomType()
     {
-        $validated = $this->validate([
-            'name' => 'required|string|max:255|unique:room_types,name',
-            'monthly_price' => 'required|numeric|min:0',
-            'capacity' => 'required|integer|min:1'
-        ]);
+        try{
+            $validated = $this->validate([
+                'name' => 'required|string|max:255|unique:room_types,name',
+                'monthly_price' => 'required|numeric|min:0',
+                'capacity' => 'required|integer|min:1'
+            ]);
 
-        RoomType::create($validated);
+            RoomType::create($validated);
 
-        $this->dispatch('success', 'Loại phòng đã được tạo thành công');
-        $this->closeModal();
-        $this->reset(['name', 'monthly_price', 'capacity']);
+            session()->flash('success', 'Loại phòng đã được tạo thành công');
+            $this->closeModal();
+            $this->reset(['name', 'monthly_price', 'capacity']);
+        }catch(\Exception $e){
+            session()->flash('error', $e->getMessage());
+            $this->closeModal();
+        }
     }
 
     public function updateRoomType()
@@ -121,7 +126,7 @@ class RoomTypeComponent extends Component
         $roomType = RoomType::findOrFail($this->editingRoomTypeId);
         $roomType->update($validated);
 
-        $this->dispatch('success', 'Loại phòng đã được cập nhật thành công');
+        session()->flash('success', 'Loại phòng đã được cập nhật thành công');
         $this->closeModal();
         $this->reset(['editingRoomTypeId', 'name', 'monthly_price', 'capacity']);
     }
@@ -131,12 +136,12 @@ class RoomTypeComponent extends Component
         $roomType = RoomType::findOrFail($this->deletingRoomTypeId);
 
         if ($roomType->rooms()->exists()) {
-            $this->dispatch('error', 'Không thể xóa loại phòng đang được sử dụng');
+            session()->flash('error', 'Không thể xóa loại phòng đang được sử dụng');
             return;
         }
 
         $roomType->delete();
-        $this->dispatch('success', 'Loại phòng đã được xóa thành công');
+        session()->flash('success', 'Loại phòng đã được xoá thành công');
         $this->closeModal();
         $this->resetPage();
     }
