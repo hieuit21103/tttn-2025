@@ -391,7 +391,7 @@ class StudentList extends Component
             $student = Student::findOrFail($this->assigningStudentId);
 
             if (!$room->isAvailable()) {
-                $session()->flash('error', 'Phòng đã đầy hoặc không còn trống!');
+                session()->flash('error', 'Phòng đã đầy hoặc không còn trống!');
                 return;
             }
 
@@ -408,12 +408,12 @@ class StudentList extends Component
 
             DB::commit();
 
-            $session()->flash('success', 'Đã xếp phòng thành công!');
+            session()->flash('success', 'Đã xếp phòng thành công!');
             $this->closeAssignRoomModal();
             $this->resetPage();
         } catch (\Exception $e) {
             DB::rollBack();
-            $session()->flash('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+            session()->flash('error', 'Có lỗi xảy ra: ' . $e->getMessage());
         }
     }
 

@@ -8,7 +8,8 @@
 
     <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <p style="margin: 8px 0;">Mã Học Sinh: {{ $student_code }}</p>
-        <p style="margin: 8px 0;">Lớp: {{ $class }}</p>
+        <p style="margin: 8px 0;">Khoa: {{ $class->faculty->name }}</p>
+        <p style="margin: 8px 0;">Lớp: {{ $class->name }}</p>
         <p style="margin: 8px 0;">Số CMND/CCCD: {{ $id_number }}</p>
         <p style="margin: 8px 0;">Địa chỉ: {{ $address }}</p>
     </div>

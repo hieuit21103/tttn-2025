@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\ClassModel;
+use App\Models\Faculty;
 use Livewire\WithPagination;
 
 class ClassList extends Component
@@ -14,6 +15,7 @@ class ClassList extends Component
     public $perPage = 10;
 
     public $name = '';
+    public $faculty_id = '';
 
     public $showAddModal = false;
     public $showEditModal = false;
@@ -24,6 +26,7 @@ class ClassList extends Component
 
     public function render()
     {
+        $faculties = Faculty::all();
         $query = ClassModel::query()
             ->orderBy('id', 'asc')
             ->where('name', 'like', "%{$this->search}%");
@@ -31,7 +34,8 @@ class ClassList extends Component
         $classes = $query->paginate($this->perPage);
 
         return view('livewire.class.list', [
-            'classes' => $classes   
+            'classes' => $classes,
+            'faculties' => $faculties
         ]);
     }
 
@@ -51,12 +55,13 @@ class ClassList extends Component
         $this->editingClassId = $id;
         $class = ClassModel::findOrFail($id);
         $this->name = $class->name;
+        $this->faculty_id = $class->faculty_id;
         $this->showEditModal = true;
     }
 
     public function openDeleteModal($id)
     {
-        $this->editingClassId = $id;
+        $this->deletingClassId = $id;
         $this->showDeleteModal = true;
     }
 
@@ -71,6 +76,7 @@ class ClassList extends Component
     public function resetClassForm()
     {
         $this->name = '';
+        $this->faculty_id = '';
         $this->editingClassId = null;
     }
 
@@ -79,10 +85,12 @@ class ClassList extends Component
         try{
             $this->validate([
                 'name' => 'required|string|max:255|unique:classes,name',
+                'faculty_id' => 'required'
             ]);
 
             ClassModel::create([
-                'name' => $this->name
+                'name' => $this->name,
+                'faculty_id' => $this->faculty_id
             ]);
 
             session()->flash('success', 'Lớp đã được tạo thành công!');
@@ -96,13 +104,17 @@ class ClassList extends Component
     public function updateClass()
     {
         try{
+            $class = ClassModel::find($this->editingClassId);
+            
             $this->validate([
-                'name' => 'required|string|max:255|unique:classes,name,',
+                'name' => 'required|string|max:255|unique:classes,name,' . $this->editingClassId,
+                'faculty_id' => 'required'
             ]);
 
-            ClassModel::where('id',$this->editingClassId)
+            ClassModel::where('id', $this->editingClassId)
                     ->update([
-                        'name' => $this->name
+                        'name' => $this->name ?? $class->name,
+                        'faculty_id' => $this->faculty_id ?? $class->faculty_id
                     ]);
             session()->flash('success', 'Lớp đã được cập nhật thành công!');
             $this->closeModal();

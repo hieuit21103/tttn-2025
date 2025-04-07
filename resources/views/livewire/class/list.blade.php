@@ -21,6 +21,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Tên Lớp</th>
+                        <th>Khoa</th>
                         <th>Trạng thái</th>
                         <th>Số lượng sinh viên</th>
                         <th>Thao tác</th>
@@ -31,6 +32,7 @@
                         <tr>
                             <td>{{ $class->id }}</td>
                             <td>{{ $class->name }}</td>
+                            <td>{{ $class->faculty->name }}</td>
                             <td>
                                 <span class="badge bg-{{ $class->is_active ? 'success' : 'danger' }}">
                                     {{ $class->is_active ? 'Hoạt động' : 'Ngừng hoạt động' }}
@@ -56,11 +58,11 @@
                 Hiển thị {{ $classes->firstItem() }} đến {{ $classes->lastItem() }} trong tổng số {{ $classes->total() }} lớp
             </div>
             <div>
-                {{ $classes->links() }}
+                {{ $classes->links('pagination') }}
             </div>
         </div>
 
-        <!-- Add Faculty Modal -->
+        <!-- Add Class Modal -->
         @if($showAddModal || $showEditModal)
         <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
             <div class="modal-dialog">
@@ -72,6 +74,18 @@
                     <form wire:submit.prevent="@if($editingClassId) updateClass @else createClass @endif">
                         <div class="modal-body">
                             <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Khoa</label>
+                                        <select class="form-select" wire:model="faculty_id" required>
+                                            <option value="">-- Chọn Khoa --</option>
+                                            @foreach($faculties as $faculty)
+                                                <option value="{{ $faculty->id }}">{{ $faculty->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('faculty_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                </div>
                                 <div class="col-12">
                                     <div class="mb-3">
                                         <label class="form-label">Tên Lớp</label>
