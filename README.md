@@ -33,7 +33,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-4. Configure Database
+4. Configure Database And Mail
 - Open `.env` file
 - Set your database connection details:
 ```
@@ -43,6 +43,17 @@ DB_PORT=3306
 DB_DATABASE=your_database_name
 DB_USERNAME=your_database_username
 DB_PASSWORD=your_database_password
+```
+- Set example mail host details: 
+```
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=harunaai235@gmail.com
+MAIL_PASSWORD=yacgvsjgohgbtlmv
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="harunaai235@gmail.com"
+MAIL_FROM_NAME="BAN QUẢN LÝ KÝ TÚC XÁ"
 ```
 
 5. Run Database Migrations
@@ -84,8 +95,7 @@ php artisan create:user --email="user@example.com" --role="admin|user"
 
 Available roles:
 - admin: Full system access
-- manager: Dormitory management access
-- staff: Basic user access
+- user: Read only mode
 
 ## Troubleshooting
 - Ensure all PHP extensions required by Laravel are installed
