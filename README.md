@@ -1,50 +1,50 @@
-# TTTN-2025 Laravel Project Setup Guide
+# Hướng Dẫn Cài Đặt Dự Án Laravel TTTN-2025
 
-## Prerequisites
-- PHP 8.1 or higher
+## Yêu Cầu Chuẩn Bị
+- PHP 8.1 trở lên
 - Composer
-- MySQL or another compatible database
-- Node.js and npm
+- MySQL hoặc cơ sở dữ liệu tương thích khác
+- Node.js và npm
 
-## Clone the Repository
+## Tải Mã Nguồn
 
 ```bash
-# Clone the repository
+# Clone kho lưu trữ
 git clone https://github.com/hieuit21103/tttn-2025.git
 
-# Navigate to the project directory
+# Di chuyển vào thư mục dự án
 cd tttn-2025
 ```
 
-## Installation Steps
+## Các Bước Cài Đặt
 
-1. Install PHP Dependencies
+1. Cài Đặt Thư Viện PHP
 ```bash
 composer install
 ```
 
-2. Create Environment File
+2. Tạo File Môi Trường `.env`
 ```bash
 cp .env.example .env
 ```
 
-3. Generate Application Key
+3. Tạo Khóa Ứng Dụng
 ```bash
 php artisan key:generate
 ```
 
-4. Configure Database And Mail
-- Open `.env` file
-- Set your database connection details:
+4. Cấu Hình CSDL và Mail
+- Mở file `.env`
+- Thiết lập thông tin kết nối CSDL:
 ```
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=your_database_name
-DB_USERNAME=your_database_username
-DB_PASSWORD=your_database_password
+DB_DATABASE=tên_database
+DB_USERNAME=tên_đăng_nhập_database
+DB_PASSWORD=mật_khẩu_database
 ```
-- Set example mail host details: 
+- Thiết lập thông tin mail:
 ```
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
@@ -56,54 +56,58 @@ MAIL_FROM_ADDRESS="harunaai235@gmail.com"
 MAIL_FROM_NAME="BAN QUẢN LÝ KÝ TÚC XÁ"
 ```
 
-5. Run Database Migrations
+5. Chạy Migration CSDL
 ```bash
 php artisan migrate
 ```
 
-6. Create Default Admin Account
+6. Tạo Tài Khoản Admin Mặc Định
 ```bash
 php artisan db:seed
 ```
 
-The default admin account credentials are:
-- username: admin
-- password: password
+Tông tin đăng nhập:
+- Tên đăng nhập: **admin**
+- Mật khẩu: **password**
 
-After logging in, it is recommended to change the default password immediately.
+**Lưu ý:** Hãy đổi mật khẩu ngay sau khi đăng nhập.
 
-7. Install Frontend Dependencies
+7. Cài Đặt Gói Frontend
 ```bash
 npm install
 npm run dev
 ```
 
-8. Start the Development Server
+8. Khởi Chạy Server Phát Triển
 ```bash
 php artisan serve
 ```
 
-## Additional Configuration
-- Check and set up any additional environment-specific configurations in the `.env` file
-- Run `php artisan config:clear` if you make any changes to configuration files
+## Cấu Hình Bổ Sung
+- Kiểm tra và điều chỉnh file `.env` nếu cần
+- Sau khi thay đổi cấu hình, chạy lệnh:
+```bash
+php artisan config:clear
+```
 
-## Create Additional Users
-To create additional users with specific roles, use the following command:
+## Tạo Thêm Người Dùng
+Sử dụng lệnh:
 ```bash
 php artisan create:user --email="user@example.com" --role="admin|user"
 ```
 
-Available roles:
-- admin: Full system access
-- user: Read only mode
+Vai trò:
+- **admin**: Toàn quyền truy cập
+- **user**: Quyền xem (read-only)
 
-## Troubleshooting
-- Ensure all PHP extensions required by Laravel are installed
-- Check file permissions
-- Verify database connection details
+## Khắc Phục Sự Cố
+- Kiểm tra đầy đủ các extension PHP
+- Kiểm tra quyền truy cập file
+- Xác minh kết nối CSDL
 
-## Contributing
-Please read the project's contribution guidelines before making any changes.
+## Đóng Góp
+Vui lòng đọc hướng dẫn đóng góp trước khi tham gia.
 
-## License
-Check the LICENSE file in the project repository for licensing information.
+## Bản Quyền
+Xem file LICENSE trong kho lưu trữ dự án để biết chi tiết về bản quyền.
+
